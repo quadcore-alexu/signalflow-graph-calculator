@@ -1,9 +1,10 @@
 package Interfaces;
 
 public interface IEdge {
-    public double getGain();
-    public void setStartNode();
-    public void setEndNode();
-    public INode getStartNode();
-    public INode getEndNode();
+    double getGain();
+    void setGain(double gain);
+    void setStartNode(INode startNode);
+    void setEndNode(INode endNode);
+    INode getStartNode();
+    INode getEndNode();
 }
