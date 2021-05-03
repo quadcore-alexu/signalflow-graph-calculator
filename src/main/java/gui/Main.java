@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;

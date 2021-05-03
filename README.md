@@ -1,2 +1,3 @@
-# Signal Flowgraph Calculator
-The program designed by CSED Faculty of Engineering Alexandria University students.
+# Signal Flow Graph Calculator
+
+The program designed by CSED, Faculty of Engineering, Alexandria University students.
