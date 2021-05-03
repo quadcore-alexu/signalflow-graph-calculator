@@ -1,21 +1,33 @@
 package model;
 
 import Jama.Matrix;
+import interfaces.IEdge;
 import interfaces.IGraphCalculator;
+import interfaces.INode;
 
 import java.util.List;
 
 public class GraphCalculator implements IGraphCalculator {
-    private SubGraph subGraph;
+    private List<INode> nodes;
     private List<Path> paths;
-    private Matrix adjacencyMatrix;
+    private Matrix augmentedAdjMatrix;
 
-    public GraphCalculator(SubGraph subGraph, List<Path> paths) {
-        this.subGraph = subGraph;
+    public GraphCalculator(List<INode> nodes, List<Path> paths) {
+        this.nodes = nodes;
         this.paths = paths;
 
     }
 
+    /*
+     DELTA = determinant of (I-AdjMatrix)
+     */
+    @Override
+    public double getDelta() {
+        return augmentedAdjMatrix.det();
+    }
+    /*
+    for delta i's
+     */
 
     @Override
     public double getDelta(int i) {
@@ -26,4 +38,40 @@ public class GraphCalculator implements IGraphCalculator {
     public double getTransferFunction() {
         return 0;
     }
+
+    /*
+    construct adjacency matrix (using out edges)
+     */
+    private Matrix constructAdjacencyMatrix() {
+        int size = nodes.size();
+        double[][] adjMatrix = new double[size][size];
+        for (INode node : nodes) {
+            int currentNodeId = node.getId();
+            List<IEdge> edges = node.getOutEdges();
+            for (IEdge edge : edges) {
+                int endNodeID = edge.getEndNode().getId();
+                adjMatrix[endNodeID][currentNodeId] = edge.getGain();
+            }
+
+        }
+        Matrix adjacencyMatrix = new Matrix(adjMatrix);
+        return adjacencyMatrix;
+    }
+
+    /*
+      AugmentedAdjMatrix= I-AdjMatrix
+     */
+    //should be private later
+    public Matrix constructAugmentedAdjMatrix() {
+        Matrix adjacencyMatrix = constructAdjacencyMatrix();
+        int dimension = adjacencyMatrix.getRowDimension();
+        Matrix identityMatrix = Matrix.identity(dimension, dimension);
+        augmentedAdjMatrix = identityMatrix.minus(adjacencyMatrix);
+        return augmentedAdjMatrix;
+    }
+
+    public Matrix getAugmentedAdjMatrix() {
+        return augmentedAdjMatrix;
+    }
+
 }
