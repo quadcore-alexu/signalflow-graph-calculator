@@ -11,20 +11,19 @@ public class SubGraph {
     private final List<INode> nodes = new ArrayList<>();
     private final List<IEdge> edges = new ArrayList<>();
 
-    public double getGain() {
-        double gain = 1;
-        for (IEdge edge : this.edges) {
-            gain *= edge.getGain();
-        }
-        return gain;
-    }
+    private double gain = 1;
 
     protected void addNode(INode node) {
-        this.nodes.add(node);
+        nodes.add(node);
     }
 
     protected void addEdge(IEdge edge) {
-        this.edges.add(edge);
+        gain *= edge.getGain();
+        edges.add(edge);
+    }
+
+    public double getGain() {
+        return gain;
     }
 
     public List<INode> getNodes() {

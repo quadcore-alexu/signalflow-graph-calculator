@@ -1,6 +1,5 @@
 package model.tests;
 
-import interfaces.IEdge;
 import interfaces.INode;
 import interfaces.ISignalFlowGraph;
 import model.Edge;
@@ -25,16 +24,21 @@ class NodeVisitorTest {
         INode second = new Node();
         INode third = new Node();
         INode fourth = new Node();
+        graph.setEnd(fourth);
 
-        IEdge e1 = new Edge(start, second, 5);
-        IEdge e2 = new Edge(second, third, 6);
-        IEdge e3 = new Edge(third, fourth, 8);
-        IEdge e4 = new Edge(second, fourth, 10);
+        new Edge(start, second, 5);
+        new Edge(second, third, 6);
+        new Edge(third, fourth, 8);
+        new Edge(second, fourth, 10); //another path
+        new Edge(fourth, second, 8); //loop
+        new Edge(fourth, fourth, 8); //self loop
+        new Edge(fourth, third, 8); //loop
     }
 
     @Test
     void visit() {
 
+        graph.update();
         List<Path> paths = graph.getPaths();
         double sumOfGain = 0;
 
@@ -42,6 +46,8 @@ class NodeVisitorTest {
             sumOfGain += path.getGain();
         }
 
-        assertEquals(sumOfGain, 240 + 50);
+        assertEquals(240 + 50, sumOfGain);
     }
+
+    //todo add tests from sheet
 }

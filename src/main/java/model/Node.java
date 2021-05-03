@@ -10,24 +10,18 @@ public class Node implements INode {
 
     private final List<IEdge> outEdges = new ArrayList<>();
 
-    private boolean isOpen = false;
-
-    protected boolean isOpen() {
-        return isOpen;
-    }
-
-    protected void setOpen(boolean open) {
-        isOpen = open;
-    }
-
     @Override
     public void addOutEdge(IEdge outEdge) {
-        this.outEdges.add(outEdge);
+        outEdges.add(outEdge);
     }
 
     @Override
     public List<IEdge> getOutEdges() {
-        return this.outEdges;
+        return outEdges;
     }
 
+    @Override
+    public void acceptVisitor(NodeVisitor v) {
+        v.visit(this);
+    }
 }
