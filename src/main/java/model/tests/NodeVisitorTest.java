@@ -32,7 +32,7 @@ class NodeVisitorTest {
         new Edge(7, fourth, third, 8); //loop
 
 
-        graph.update();
+        graph.calculatePathsNLoops();
         List<Path> paths = graph.getPaths();
         double sumOfGain = 0;
 
@@ -71,7 +71,7 @@ class NodeVisitorTest {
         new Edge(9, y6, y5, 2);
         new Edge(10, y6, y6, -1);
 
-        graph.update();
+        graph.calculatePathsNLoops();
 
         List<Path> paths = graph.getPaths();
         List<Loop> loops = graph.getLoops();
@@ -89,4 +89,27 @@ class NodeVisitorTest {
         assertEquals(-135, sumOfLoops);
     }
 
+    @Test
+    void test2() {
+        ISignalFlowGraph graph = new SignalFlowGraph();
+
+        INode n1 = new Node(1);
+        INode n2 = new Node(2);
+        INode n3 = new Node(3);
+
+        graph.setStart(n1);
+        graph.setEnd(n3);
+
+        new Edge(1, n1, n2, 1);
+        new Edge(2, n2, n1, 1);
+        new Edge(3, n2, n3, 1);
+        new Edge(4, n3, n2, 1);
+        new Edge(5, n1, n3, 1);
+        new Edge(6, n3, n1, 1);
+
+        graph.calculatePathsNLoops();
+
+        assertEquals(2, graph.getPaths().size());
+        assertEquals(5, graph.getLoops().size());
+    }
 }

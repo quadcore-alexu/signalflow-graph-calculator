@@ -9,14 +9,17 @@ import java.util.List;
 
 public interface ISignalFlowGraph {
 
+    void addNode(INode node);
+
     void setStart(INode start);
 
     void setEnd(INode end);
 
-    void update();
+    void calculatePathsNLoops();
 
     List<Path> getPaths();
 
     List<Loop> getLoops();
+
     HashMap<Integer, NonTouchingLoop> getNonTouchingLoops();
 }

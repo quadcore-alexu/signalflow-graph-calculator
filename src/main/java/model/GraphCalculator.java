@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphCalculator implements IGraphCalculator {
-    private List<INode> nodes;
-    private List<Path> paths;
+    private final List<INode> nodes;
+    private final List<Path> paths;
     private Matrix augmentedAdjMatrix;
 
     public GraphCalculator(List<INode> nodes, List<Path> paths) {
@@ -60,8 +60,7 @@ public class GraphCalculator implements IGraphCalculator {
             }
 
         }
-        Matrix adjacencyMatrix = new Matrix(adjMatrix);
-        return adjacencyMatrix;
+        return new Matrix(adjMatrix);
     }
 
     /*

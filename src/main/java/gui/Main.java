@@ -1,10 +1,11 @@
 package gui;
 
-import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
+import interfaces.ISignalFlowGraph;
 import model.Edge;
 import model.GraphCalculator;
 import model.Node;
@@ -24,33 +25,32 @@ public class Main extends JFrame {
     mxGraph graph;
     Object parent;
 
-    SignalFlowGraph sfg;
+    ISignalFlowGraph sfg;
     int nodeID = 0;
     int edgeID = 0;
 
     public void addNode(int x, int y, String color) {
         mxCell vertex;
-        vertex = (mxCell) graph.insertVertex(parent, "N"+nodeID, nodeID+"",x,y,30, 30,
-                "strokeColor=#000000;fillColor=#"+color+";shape=ellipse;resizable=0");
-        vertex.setId(nodeID+"");
+        vertex = (mxCell) graph.insertVertex(parent, "N" + nodeID, nodeID + "", x, y, 30, 30,
+                "strokeColor=#000000;fillColor=#" + color + ";shape=ellipse;resizable=0");
+        vertex.setId(nodeID + "");
         vertex.setEdge(false);
-        vertex.setAttribute("strokeColor","#66FF00");
+        vertex.setAttribute("strokeColor", "#66FF00");
         graph.refresh();
         // Adding node in back
         Node node = new Node(nodeID);
         nodeMapper.put(nodeID, new Object[]{vertex, node});
-        nodeID ++;
+        nodeID++;
     }
 
     public Main() {
         super("Signal Flow Solver");
         initComponents();
 
-        graph = new mxGraph(){
+        graph = new mxGraph() {
             @Override
             public boolean isCellSelectable(Object cell) {
-                if (model.isEdge(cell))
-                {
+                if (model.isEdge(cell)) {
                     return false;
                 }
                 return super.isCellSelectable(cell);
@@ -58,7 +58,7 @@ public class Main extends JFrame {
         };
 
         graph.getModel().addListener(mxEvent.CHANGE, (o, mxEventObject) -> {
-            Object change = ((ArrayList)mxEventObject.getProperties().get("changes")).get(0);
+            Object change = ((ArrayList) mxEventObject.getProperties().get("changes")).get(0);
             if (change instanceof mxValueChange) {
                 mxCell edge = (mxCell) ((mxValueChange) change).getCell();
                 if (edge.isEdge()) {
@@ -76,9 +76,9 @@ public class Main extends JFrame {
         });
 
         graph.addListener(mxEvent.CELL_CONNECTED, (o, mxEventObject) -> {
-            if (!(boolean)mxEventObject.getProperties().get("source")) {
+            if (!(boolean) mxEventObject.getProperties().get("source")) {
                 mxCell graphEdge = (mxCell) mxEventObject.getProperties().get("edge");
-                graphEdge.setId(edgeID+"");
+                graphEdge.setId(edgeID + "");
                 Node startNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getSource().getId()))[1]);
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
                 Edge edge = new Edge(edgeID, startNode, endNode, 0);
@@ -93,11 +93,9 @@ public class Main extends JFrame {
         try {
             addNode(300, 500, "00FFFF");
             addNode(1200, 500, "FF6666");
-            sfg.setStart((Node)nodeMapper.get(0)[1]);
-            sfg.setStart((Node)nodeMapper.get(1)[1]);
-        }
-        finally
-        {
+            sfg.setStart((Node) nodeMapper.get(0)[1]);
+            sfg.setStart((Node) nodeMapper.get(1)[1]);
+        } finally {
             graph.getModel().endUpdate();
             graph.refresh();
 

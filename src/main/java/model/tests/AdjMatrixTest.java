@@ -56,10 +56,10 @@ class AdjMatrixTest {
 
         graphCalculator.constructAugmentedAdjMatrix();
         arr = graphCalculator.getAugmentedAdjMatrix().getArray();
-        double a1[] = {1, 5, 0, 6};
-        double a2[] = {-1, 1, 0, 0};
-        double a3[] = {0, -2, 1, 4};
-        double a4[] = {0, 0, -3, 1};
+        double[] a1 = {1, 5, 0, 6};
+        double[] a2 = {-1, 1, 0, 0};
+        double[] a3 = {0, -2, 1, 4};
+        double[] a4 = {0, 0, -3, 1};
 
         assertArrayEquals(a1, arr[0]);
         assertArrayEquals(a2, arr[1]);
@@ -111,7 +111,7 @@ class AdjMatrixTest {
         new Edge(9, y5, y6, 1);
         new Edge(10, y7, y7, -1);
 
-        graph.update();
+        graph.calculatePathsNLoops();
 
         List<Path> paths = graph.getPaths();
         assertEquals(2, paths.size());
@@ -123,7 +123,7 @@ class AdjMatrixTest {
         for (int i = 0; i < arr.length; i++)
             assertArrayEquals(a[i], arr[i]);
         assertEquals(450, (int) g2.getDelta());
-        int sliceIndices[] = {2, 3};
+        //int sliceIndices[] = {2, 3};
         //assertArrayEquals(sliceIndices,g2.removeForwardPath(paths.get(1)));
         assertEquals(11, (int) g2.getDelta(1));
         //assertArrayEquals(new int[] {6},g2.removeForwardPath(paths.get(0)));
