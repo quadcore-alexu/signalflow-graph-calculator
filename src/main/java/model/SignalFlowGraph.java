@@ -24,7 +24,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
      * used to calculate loops and paths.
      * it is important to use it before getting loops or paths
      */
-    @Override
+
     public void update() {
         NodeVisitor nodeVisitor = new NodeVisitor(this.end);
         start.acceptVisitor(nodeVisitor);
@@ -58,6 +58,11 @@ public class SignalFlowGraph implements ISignalFlowGraph {
     }
 
     @Override
+    public void addNode(INode node) {
+
+    }
+
+    @Override
     public void setStart(INode start) {
         this.start = start;
     }
@@ -65,6 +70,11 @@ public class SignalFlowGraph implements ISignalFlowGraph {
     @Override
     public void setEnd(INode end) {
         this.end = end;
+    }
+
+    @Override
+    public void calculatePathsNLoops() {
+
     }
 
 }

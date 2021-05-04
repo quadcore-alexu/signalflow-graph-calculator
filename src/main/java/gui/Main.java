@@ -5,7 +5,6 @@ import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
-import interfaces.ISignalFlowGraph;
 import model.Edge;
 import model.GraphCalculator;
 import model.Node;
@@ -13,7 +12,6 @@ import model.SignalFlowGraph;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,7 +23,8 @@ public class Main extends JFrame {
     mxGraph graph;
     Object parent;
 
-    ISignalFlowGraph sfg;
+
+    SignalFlowGraph sfg;
     int nodeID = 0;
     int edgeID = 0;
 
@@ -94,7 +93,7 @@ public class Main extends JFrame {
             addNode(300, 500, "00FFFF");
             addNode(1200, 500, "FF6666");
             sfg.setStart((Node) nodeMapper.get(0)[1]);
-            sfg.setStart((Node) nodeMapper.get(1)[1]);
+            sfg.setEnd((Node) nodeMapper.get(1)[1]);
         } finally {
             graph.getModel().endUpdate();
             graph.refresh();
@@ -156,24 +155,33 @@ public class Main extends JFrame {
     private GraphCalculator calc;
 
     public void calculate() {
+        sfg.update();
         calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+
+        //-----error message---
+
         /*JDialog d = new JDialog(f, "Error");
         JLabel l = new JLabel("Error");
         d.add(l);
         d.setSize(100, 100);
         d.setLocation(600,200);
         d.setVisible(true);*/
+
+        //------results---
+
+        JPanel p = new JPanel();
         JDialog d = new JDialog(f, "Results");
         JLabel l = new JLabel();
         l.setText("Transfer function= " + calc.getTransferFunction());
-        d.add(l);
-        //JLabel w = new JLabel();
-        //w.setText("Delta="+calc.getDelta());
-        //d.add(w);
+        p.add(l);
+
+        for (int i=0;i<sfg.getPaths().size();i++){
+            p.add(new JLabel("Delta "+(i+1)+"="));
+        }
+        d.add(p);
         d.setSize(200, 100);
         d.setLocation(600, 200);
         d.setVisible(true);
-
     }
 
         public static void main(String[] args) {
