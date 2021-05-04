@@ -13,7 +13,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
 
     private List<Path> paths = new ArrayList<>();
     private List<Loop> loops = new ArrayList<>();
-    private List<Node> nodes = new ArrayList<>();
+    private final List<INode> nodes = new ArrayList<>();
 
     /**
      * used to calculate loops and paths.
@@ -62,4 +62,12 @@ public class SignalFlowGraph implements ISignalFlowGraph {
         this.end = end;
     }
 
+    @Override
+    public void addNode(INode node) {
+        nodes.add(node);
+    }
+
+    public List<INode> getNodes() {
+        return nodes;
+    }
 }
