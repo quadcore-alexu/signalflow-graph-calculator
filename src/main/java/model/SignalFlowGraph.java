@@ -1,6 +1,5 @@
 package model;
 
-import interfaces.IGraphCalculator;
 import interfaces.INode;
 import interfaces.ISignalFlowGraph;
 
@@ -10,18 +9,23 @@ import java.util.List;
 
 public class SignalFlowGraph implements ISignalFlowGraph {
 
-    private final List<INode> nodes = new ArrayList<>();
     INode start, end;
+
     private List<Path> paths = new ArrayList<>();
     private List<Loop> loops = new ArrayList<>();
-    private IGraphCalculator graphCalculator = new GraphCalculator(nodes, paths);
+
+    public List<INode> getNodes() {
+        return nodes;
+    }
+
+    private List<INode> nodes = new ArrayList<>();
 
     /**
      * used to calculate loops and paths.
      * it is important to use it before getting loops or paths
      */
-    @Override
-    public void calculatePathsNLoops() {
+
+    public void update() {
         NodeVisitor nodeVisitor = new NodeVisitor(this.end);
         start.acceptVisitor(nodeVisitor);
         paths = nodeVisitor.getPaths();
@@ -54,6 +58,11 @@ public class SignalFlowGraph implements ISignalFlowGraph {
     }
 
     @Override
+    public void addNode(INode node) {
+
+    }
+
+    @Override
     public INode getStart() {
         return start;
     }
@@ -74,11 +83,8 @@ public class SignalFlowGraph implements ISignalFlowGraph {
     }
 
     @Override
-    public void addNode(INode node) {
-        nodes.add(node);
+    public void calculatePathsNLoops() {
+
     }
 
-    public List<INode> getNodes() {
-        return nodes;
-    }
 }

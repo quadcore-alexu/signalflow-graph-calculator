@@ -1,25 +1,21 @@
 package gui;
 
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxGraphView;
-import com.mxgraph.view.mxStylesheet;
-import interfaces.ISignalFlowGraph;
 import model.Edge;
+import model.GraphCalculator;
 import model.Node;
 import model.SignalFlowGraph;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main extends JFrame {
 
@@ -29,7 +25,8 @@ public class Main extends JFrame {
     mxGraph graph;
     Object parent;
 
-    ISignalFlowGraph sfg;
+
+    SignalFlowGraph sfg;
     int nodeID = 0;
     int edgeID = 0;
 
@@ -92,6 +89,7 @@ public class Main extends JFrame {
         graph.refresh();
         // Adding node in back
         Node node = new Node(nodeID);
+        sfg.addNode(node);
         nodeMapper.put(nodeID, new Object[]{vertex, node});
         nodeID++;
 
@@ -164,13 +162,14 @@ public class Main extends JFrame {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         dialogPane.add(graphComponent);
     }
-
     private void initComponents() {
         // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
         dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JPanel buttonBar = new JPanel();
         JButton addNodeBtn = new JButton();
+        JButton calculateBtn = new JButton();
+
 
         //======== this ========
         var contentPane = getContentPane();
@@ -196,7 +195,12 @@ public class Main extends JFrame {
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0));
 
-
+                //---- calculate----
+                calculateBtn.setText("Calculate");
+                calculateBtn.addActionListener(e ->calculate());
+                Dimension size = calculateBtn.getPreferredSize();
+                calculateBtn.setBounds(200, 100, size.width, size.height);
+                buttonBar.add(calculateBtn);
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -206,8 +210,40 @@ public class Main extends JFrame {
     }
 
     private JPanel dialogPane;
+    static JFrame f;
+    private GraphCalculator calc;
 
-    public static void main(String[] args) {
+    public void calculate() {
+        sfg.update();
+        calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+
+        //-----error message---
+
+        /*JDialog d = new JDialog(f, "Error");
+        JLabel l = new JLabel("Error");
+        d.add(l);
+        d.setSize(100, 100);
+        d.setLocation(600,200);
+        d.setVisible(true);*/
+
+        //------results---
+
+        JPanel p = new JPanel();
+        JDialog d = new JDialog(f, "Results");
+        JLabel l = new JLabel();
+        l.setText("Transfer function= " + calc.getTransferFunction());
+        p.add(l);
+
+        for (int i=0;i<sfg.getPaths().size();i++){
+            p.add(new JLabel("Delta "+(i+1)+"="));
+        }
+        d.add(p);
+        d.setSize(200, 100);
+        d.setLocation(600, 200);
+        d.setVisible(true);
+    }
+
+        public static void main(String[] args) {
         Main frame = new Main();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setSize(1000, 600);
