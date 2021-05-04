@@ -6,12 +6,13 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 import model.Edge;
+import model.GraphCalculator;
 import model.Node;
 import model.SignalFlowGraph;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -105,13 +106,14 @@ public class Main extends JFrame {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         dialogPane.add(graphComponent);
     }
-
     private void initComponents() {
         // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
         dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JPanel buttonBar = new JPanel();
         JButton addNodeBtn = new JButton();
+        JButton calculateBtn = new JButton();
+
 
         //======== this ========
         var contentPane = getContentPane();
@@ -137,7 +139,12 @@ public class Main extends JFrame {
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 0), 0, 0));
 
-
+                //---- calculate----
+                calculateBtn.setText("Calculate");
+                calculateBtn.addActionListener(e ->calculate());
+                Dimension size = calculateBtn.getPreferredSize();
+                calculateBtn.setBounds(200, 100, size.width, size.height);
+                buttonBar.add(calculateBtn);
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -147,8 +154,31 @@ public class Main extends JFrame {
     }
 
     private JPanel dialogPane;
+    static JFrame f;
+    private GraphCalculator calc;
 
-    public static void main(String[] args) {
+    public void calculate() {
+        calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+        /*JDialog d = new JDialog(f, "Error");
+        JLabel l = new JLabel("Error");
+        d.add(l);
+        d.setSize(100, 100);
+        d.setLocation(600,200);
+        d.setVisible(true);*/
+        JDialog d = new JDialog(f, "Results");
+        JLabel l = new JLabel();
+        l.setText("Transfer function= " + calc.getTransferFunction());
+        d.add(l);
+        //JLabel w = new JLabel();
+        //w.setText("Delta="+calc.getDelta());
+        //d.add(w);
+        d.setSize(200, 100);
+        d.setLocation(600, 200);
+        d.setVisible(true);
+
+    }
+
+        public static void main(String[] args) {
         Main frame = new Main();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setSize(1000, 600);
