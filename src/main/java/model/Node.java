@@ -10,6 +10,7 @@ public class Node implements INode {
 
     private int id;
     private final List<IEdge> outEdges = new ArrayList<>();
+    private int id;
 
     public Node(int id) {
         this.id = id;
@@ -31,5 +32,15 @@ public class Node implements INode {
     @Override
     public void acceptVisitor(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
 }

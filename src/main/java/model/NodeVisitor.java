@@ -15,7 +15,8 @@ public class NodeVisitor {
     List<Path> paths = new ArrayList<>(); //list to hold all forward paths
     List<Loop> loops = new ArrayList<>(); //list to hold all forward paths
 
-    Map<INode, Boolean> flags = new HashMap<>();
+    Map<INode, Flag> flags = new HashMap<>(); //map between node and its flags
+
     List<INode> currentNodes = new ArrayList<>(); //list to hold current nodes on which we passed (open nodes)
     List<IEdge> currentEdges = new ArrayList<>(); //same as above but for edges, to get gain
 
@@ -42,9 +43,15 @@ public class NodeVisitor {
         paths.add(path);
     }
 
+    /**
+     * used to create a new loop by giving it all the current nodes and edges and adding it to loops
+     */
     private void createLoop(INode endNode) {
         Loop loop = new Loop();
-        //todo
+        for (int i = currentNodes.indexOf(endNode); i < currentNodes.size(); i++) {
+            loop.addNode(currentNodes.get(i));
+            loop.addEdge(currentEdges.get(i));
+        }
         loops.add(loop);
     }
 
@@ -55,32 +62,45 @@ public class NodeVisitor {
      */
     protected void visit(Node node) {
 
-        boolean firstTime = false; //assume not first time to visit node
-
-        if (!flags.containsKey(node)) { //if it is first time
-            firstTime = true;
-            flags.put(node, true); //open node
-        } else flags.replace(node, true); //open node
+        //open node
+        if (flags.containsKey(node)) flags.get(node).setOpen(true);
+        else flags.put(node, new Flag());
 
         currentNodes.add(node); //add to current path
 
         if (node.equals(dest)) createPath(); //this is the output node. i.e. end of path
 
-        for (IEdge outEdge : node.getOutEdges()) { //loop on children
+        //loop on children
+        for (IEdge outEdge : node.getOutEdges()) {
 
-            if (!isOpen(outEdge.getEndNode())) { //if node is open, avoid cycle
+            //enter only if child is not open, to avoid cycle
+            if (!isOpen(outEdge.getEndNode())) {
+
                 currentEdges.add(outEdge); //add edge to path
-                outEdge.getEndNode().acceptVisitor(this); //recursively vis+it the child
-            } else if (firstTime) { //open and for the first time
+                outEdge.getEndNode().acceptVisitor(this); //recursively visit the child
+
+            // if child is open and for the first time. i.e. was not closed before
+            } else if (!wasClosed(outEdge.getEndNode())) {
+
+                currentEdges.add(outEdge); //add edge to path to get loop
                 createLoop(outEdge.getEndNode()); //create new loop
+                removeLastEdge(); //remove edge after getting loop
             }
 
-        }
+        } //END for loop
 
 
-        flags.replace(node, false); //close node
+        flags.get(node).setOpen(false); //close node
         removeLastEdge(); //remove edge from current path
         removeLastNode(); //remove node from current path
+    }
+
+    protected List<Path> getPaths() {
+        return paths;
+    }
+
+    protected List<Loop> getLoops() {
+        return loops;
     }
 
     /**
@@ -99,18 +119,46 @@ public class NodeVisitor {
             currentEdges.remove(currentEdges.size() - 1);
     }
 
-    protected List<Path> getPaths() {
-        return paths;
-    }
-
-    protected List<Loop> getLoops() {
-        return loops;
-    }
-
+    /**
+     * test if a certain node is currently open
+     * @param node to test
+     * @return true if node is open, false otherwise
+     */
     private boolean isOpen(INode node) {
         if (flags.containsKey(node))
-            return flags.get(node);
-        return false; //first time
+            return flags.get(node).isOpen();
+        return false; //not yet visited
     }
 
+    /**
+     * test if a node was closed before at least once (complete visit). i.e. the node was opened then closed.
+     * @param node to test
+     * @return true if it was closed before, false otherwise
+     */
+    private boolean wasClosed(INode node) {
+        if (flags.containsKey(node))
+            return flags.get(node).wasClosed();
+        return false; //not yet visited
+    }
+
+    /**
+     * this class is to hold flags on each node
+     */
+    private static class Flag {
+        private boolean isOpen = true;
+        private boolean wasClosed = false;
+
+        private boolean isOpen() {
+            return isOpen;
+        }
+
+        private void setOpen(boolean open) {
+            isOpen = open;
+            if (!open) wasClosed = true; //set that this node was closed before
+        }
+
+        public boolean wasClosed() {
+            return wasClosed;
+        }
+    }
 }

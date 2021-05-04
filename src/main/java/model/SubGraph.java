@@ -13,7 +13,7 @@ public class SubGraph {
 
     private double gain = 1;
 
-    protected void addNode(INode node) {
+    public void addNode(INode node) {
         nodes.add(node);
     }
 
