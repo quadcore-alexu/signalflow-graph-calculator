@@ -15,21 +15,21 @@ class NodeVisitorTest {
     void simpleTest() {
         ISignalFlowGraph graph = new SignalFlowGraph();
 
-        INode start = new Node();
-        INode second = new Node();
-        INode third = new Node();
-        INode fourth = new Node();
+        INode start = new Node(1);
+        INode second = new Node(2);
+        INode third = new Node(3);
+        INode fourth = new Node(4);
 
         graph.setStart(start);
         graph.setEnd(fourth);
 
-        new Edge(start, second, 5);
-        new Edge(second, third, 6);
-        new Edge(third, fourth, 8);
-        new Edge(second, fourth, 10); //another path
-        new Edge(fourth, second, 8); //loop
-        new Edge(fourth, fourth, 8); //self loop
-        new Edge(fourth, third, 8); //loop
+        new Edge(1, start, second, 5);
+        new Edge(2, second, third, 6);
+        new Edge(3, third, fourth, 8);
+        new Edge(4, second, fourth, 10); //another path
+        new Edge(5, fourth, second, 8); //loop
+        new Edge(6, fourth, fourth, 8); //self loop
+        new Edge(7, fourth, third, 8); //loop
 
 
         graph.calculatePathsNLoops();
@@ -50,26 +50,26 @@ class NodeVisitorTest {
     void test1() {
         ISignalFlowGraph graph = new SignalFlowGraph();
 
-        INode y1 = new Node();
-        INode y2 = new Node();
-        INode y3 = new Node();
-        INode y4 = new Node();
-        INode y5 = new Node();
-        INode y6 = new Node();
+        INode y1 = new Node(1);
+        INode y2 = new Node(2);
+        INode y3 = new Node(3);
+        INode y4 = new Node(4);
+        INode y5 = new Node(5);
+        INode y6 = new Node(6);
 
         graph.setStart(y1);
         graph.setEnd(y5);
 
-        new Edge(y1, y2, 1);
-        new Edge(y2, y3, 5);
-        new Edge(y3, y4, 10);
-        new Edge(y4, y5, 2);
-        new Edge(y5, y2, -1);
-        new Edge(y5, y4, -2);
-        new Edge(y4, y3, -1);
-        new Edge(y2, y6, 10);
-        new Edge(y6, y5, 2);
-        new Edge(y6, y6, -1);
+        new Edge(1, y1, y2, 1);
+        new Edge(2, y2, y3, 5);
+        new Edge(3, y3, y4, 10);
+        new Edge(4, y4, y5, 2);
+        new Edge(5, y5, y2, -1);
+        new Edge(6, y5, y4, -2);
+        new Edge(7, y4, y3, -1);
+        new Edge(8, y2, y6, 10);
+        new Edge(9, y6, y5, 2);
+        new Edge(10, y6, y6, -1);
 
         graph.calculatePathsNLoops();
 
@@ -93,19 +93,19 @@ class NodeVisitorTest {
     void test2() {
         ISignalFlowGraph graph = new SignalFlowGraph();
 
-        INode n1 = new Node();
-        INode n2 = new Node();
-        INode n3 = new Node();
+        INode n1 = new Node(1);
+        INode n2 = new Node(2);
+        INode n3 = new Node(3);
 
         graph.setStart(n1);
         graph.setEnd(n3);
 
-        new Edge(n1, n2, 1);
-        new Edge(n2, n1, 1);
-        new Edge(n2, n3, 1);
-        new Edge(n3, n2, 1);
-        new Edge(n1, n3, 1);
-        new Edge(n3, n1, 1);
+        new Edge(1, n1, n2, 1);
+        new Edge(2, n2, n1, 1);
+        new Edge(3, n2, n3, 1);
+        new Edge(4, n3, n2, 1);
+        new Edge(5, n1, n3, 1);
+        new Edge(6, n3, n1, 1);
 
         graph.calculatePathsNLoops();
 

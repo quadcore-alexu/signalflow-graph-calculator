@@ -1,8 +1,10 @@
 package interfaces;
 
 import model.Loop;
+import model.NonTouchingLoop;
 import model.Path;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface ISignalFlowGraph {
@@ -16,4 +18,5 @@ public interface ISignalFlowGraph {
     List<Path> getPaths();
 
     List<Loop> getLoops();
+    HashMap<Integer, NonTouchingLoop> getNonTouchingLoops();
 }

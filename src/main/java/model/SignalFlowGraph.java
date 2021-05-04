@@ -4,6 +4,7 @@ import interfaces.INode;
 import interfaces.ISignalFlowGraph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SignalFlowGraph implements ISignalFlowGraph {
@@ -12,6 +13,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
 
     private List<Path> paths = new ArrayList<>();
     private List<Loop> loops = new ArrayList<>();
+    private List<Node> nodes = new ArrayList<>();
 
     /**
      * used to calculate loops and paths.
@@ -27,6 +29,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
 
     /**
      * remember to update first
+     *
      * @return list of all paths
      */
     @Override
@@ -36,11 +39,17 @@ public class SignalFlowGraph implements ISignalFlowGraph {
 
     /**
      * remember to update first
+     *
      * @return list of all loops
      */
     @Override
     public List<Loop> getLoops() {
         return loops;
+    }
+
+    @Override
+    public HashMap<Integer, NonTouchingLoop> getNonTouchingLoops() {
+        return null;
     }
 
     @Override
