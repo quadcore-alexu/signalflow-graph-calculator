@@ -19,20 +19,20 @@ class NodeVisitorTest {
 
     @BeforeAll
     static void setUp() {
-        INode start = new Node();
+        INode start = new Node(1);
         graph.setStart(start);
-        INode second = new Node();
-        INode third = new Node();
-        INode fourth = new Node();
+        INode second = new Node(2);
+        INode third = new Node(3);
+        INode fourth = new Node(4);
         graph.setEnd(fourth);
 
-        new Edge(start, second, 5);
-        new Edge(second, third, 6);
-        new Edge(third, fourth, 8);
-        new Edge(second, fourth, 10); //another path
-        new Edge(fourth, second, 8); //loop
-        new Edge(fourth, fourth, 8); //self loop
-        new Edge(fourth, third, 8); //loop
+        new Edge(1, start, second, 5);
+        new Edge(2, second, third, 6);
+        new Edge(3, third, fourth, 8);
+        new Edge(4, second, fourth, 10); //another path
+        new Edge(5, fourth, second, 8); //loop
+        new Edge(6, fourth, fourth, 8); //self loop
+        new Edge(7, fourth, third, 8); //loop
     }
 
     @Test

@@ -8,7 +8,15 @@ import java.util.List;
 
 public class Node implements INode {
 
+    private int id;
     private final List<IEdge> outEdges = new ArrayList<>();
+
+    public Node(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public int getID() { return id; }
 
     @Override
     public void addOutEdge(IEdge outEdge) {
