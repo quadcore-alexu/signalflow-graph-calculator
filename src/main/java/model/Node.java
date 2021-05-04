@@ -10,7 +10,6 @@ public class Node implements INode {
 
     private int id;
     private final List<IEdge> outEdges = new ArrayList<>();
-    private int id;
 
     public Node(int id) {
         this.id = id;

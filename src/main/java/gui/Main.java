@@ -67,6 +67,7 @@ public class Main extends JFrame {
                     } catch (Exception e) {
                         // print error message
                         edge.setValue(((mxValueChange) change).getPrevious());
+                        graph.refresh();
                     }
                 }
             }
