@@ -38,6 +38,7 @@ public class Main extends JFrame {
         graph.refresh();
         // Adding node in back
         Node node = new Node(nodeID);
+        sfg.addNode(node);
         nodeMapper.put(nodeID, new Object[]{vertex, node});
         nodeID++;
     }
