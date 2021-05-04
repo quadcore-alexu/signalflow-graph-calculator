@@ -5,6 +5,7 @@ import interfaces.IEdge;
 import interfaces.IGraphCalculator;
 import interfaces.INode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphCalculator implements IGraphCalculator {
@@ -17,6 +18,7 @@ public class GraphCalculator implements IGraphCalculator {
         this.paths = paths;
 
     }
+    //to do --> function to return list of delta i's
 
     /*
      DELTA = determinant of (I-AdjMatrix)
@@ -27,11 +29,15 @@ public class GraphCalculator implements IGraphCalculator {
     }
     /*
     for delta i's
+    zero based index
      */
 
     @Override
     public double getDelta(int i) {
-        return 0;
+        int []sliceIndices=removeForwardPath(paths.get(i));
+        if (sliceIndices==null || sliceIndices.length==0) return 1;
+        Matrix m=augmentedAdjMatrix.getMatrix(sliceIndices,sliceIndices);
+        return m.det();
     }
 
     @Override
@@ -72,6 +78,31 @@ public class GraphCalculator implements IGraphCalculator {
 
     public Matrix getAugmentedAdjMatrix() {
         return augmentedAdjMatrix;
+    }
+
+    private int[] removeForwardPath(Path path){
+        if(path.getNodes().size()==augmentedAdjMatrix.getRowDimension()) return null;
+
+        int index=0;
+        List <Integer> nodesToRemove=new ArrayList<>();
+        for (INode node : path.getNodes())
+        {
+           nodesToRemove.add(node.getId());
+        }
+        System.out.println(nodesToRemove.size());
+        int size=nodes.size()-nodesToRemove.size();
+        int[] sliceIndices=new int[size];
+        for (int i=0;i<nodes.size();i++)
+        {
+            if(!nodesToRemove.contains(i))
+            {
+                sliceIndices[index++]=i;
+            }
+        }
+
+
+        return sliceIndices;
+
     }
 
 }
