@@ -1,10 +1,16 @@
 package gui;
 
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel.mxValueChange;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxGraphView;
+import com.mxgraph.view.mxStylesheet;
 import interfaces.ISignalFlowGraph;
 import model.Edge;
 import model.Node;
@@ -13,8 +19,7 @@ import model.SignalFlowGraph;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class Main extends JFrame {
 
@@ -28,7 +33,53 @@ public class Main extends JFrame {
     int nodeID = 0;
     int edgeID = 0;
 
+    public void checkConnectivity(){
+        boolean connected = true;
+        Object[] cells = graph.getChildVertices(graph.getDefaultParent());
+        for (Object c: cells)
+        {   mxCell cell = (mxCell) c;
+            if(cell.getEdgeCount() == 0){
+                connected = false;
+                break;
+            }
+            for (int i = 0; i < cell.getEdgeCount(); i++) {
+                mxICell source = ((mxCell) cell.getEdgeAt(i)).getSource();
+                mxICell target = ((mxCell) cell.getEdgeAt(i)).getTarget();
+                if(source == null){
+                    if(sfg.getStart() == null)
+                        sfg.setStart((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
+
+                    else {
+                        connected = false;
+                        break;
+                    }
+                }
+                if(target == null){
+                    if(sfg.getEnd() == null)
+                        sfg.setEnd((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
+
+                    else {
+                        connected = false;
+                        break;
+                    }
+                }
+            }
+            System.out.println("id: " + cell.getId() + ", value: " + cell.getValue() );
+        }
+        if(!connected) {
+            //display error message
+            System.out.println("ERROR");
+        }
+//        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+//        style.put(mxConstants.STYLE_ROUNDED, true);
+//        style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+
+
+//        mxGraphView graphView = graph.getView();
+//        System.out.println(Arrays.toString(graphView.getCellStates(cells)));
+    }
     public void addNode(int x, int y, String color) {
+        checkConnectivity();
         mxCell vertex;
         vertex = (mxCell) graph.insertVertex(parent, "N" + nodeID, nodeID + "", x, y, 30, 30,
                 "strokeColor=#000000;fillColor=#" + color + ";shape=ellipse;resizable=0");
@@ -40,6 +91,7 @@ public class Main extends JFrame {
         Node node = new Node(nodeID);
         nodeMapper.put(nodeID, new Object[]{vertex, node});
         nodeID++;
+
     }
 
     public Main() {
@@ -92,8 +144,10 @@ public class Main extends JFrame {
         try {
             addNode(300, 500, "00FFFF");
             addNode(1200, 500, "FF6666");
-            sfg.setStart((Node) nodeMapper.get(0)[1]);
-            sfg.setStart((Node) nodeMapper.get(1)[1]);
+            //overridden by checking method .. the user may change the start / end node later
+//            sfg.setStart((Node) nodeMapper.get(0)[1]);
+//            //setEnd ?
+//            sfg.setStart((Node) nodeMapper.get(1)[1]);
         } finally {
             graph.getModel().endUpdate();
             graph.refresh();

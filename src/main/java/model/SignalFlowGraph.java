@@ -54,6 +54,16 @@ public class SignalFlowGraph implements ISignalFlowGraph {
     }
 
     @Override
+    public INode getStart() {
+        return start;
+    }
+
+    @Override
+    public INode getEnd() {
+        return end;
+    }
+
+    @Override
     public void setStart(INode start) {
         this.start = start;
     }

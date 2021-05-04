@@ -22,4 +22,8 @@ public interface ISignalFlowGraph {
     List<Loop> getLoops();
 
     HashMap<Integer, NonTouchingLoop> getNonTouchingLoops();
+
+    INode getStart();
+
+    INode getEnd();
 }
