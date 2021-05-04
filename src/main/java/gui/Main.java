@@ -34,6 +34,8 @@ public class Main extends JFrame {
     int edgeID = 0;
 
     public void checkConnectivity(){
+        sfg.setStart(null);
+        sfg.setEnd(null);
         boolean connected = true;
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         for (Object c: cells)
@@ -42,41 +44,42 @@ public class Main extends JFrame {
                 connected = false;
                 break;
             }
+            //boolean flags to check if a cell is a source or/and target
+            boolean isSource = false;
+            boolean isTarget = false;
+            System.out.println("id: " + cell.getId() );
+
             for (int i = 0; i < cell.getEdgeCount(); i++) {
                 mxICell source = ((mxCell) cell.getEdgeAt(i)).getSource();
                 mxICell target = ((mxCell) cell.getEdgeAt(i)).getTarget();
-                if(source == null){
-                    if(sfg.getStart() == null)
-                        sfg.setStart((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
-
-                    else {
-                        connected = false;
-                        break;
-                    }
-                }
-                if(target == null){
-                    if(sfg.getEnd() == null)
-                        sfg.setEnd((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
-
-                    else {
-                        connected = false;
-                        break;
-                    }
-                }
+//                System.out.println("source id: " + source.getId() );
+//                System.out.println("target id: " + target.getId() );
+                //self loop
+                if(source.getId().equals(target.getId()))
+                    continue;
+                if(source.getId().equals(cell.getId()))
+                    isSource = true;
+                if(target.getId().equals(cell.getId()))
+                    isTarget = true;
             }
-            System.out.println("id: " + cell.getId() + ", value: " + cell.getValue() );
+            if(isSource && !isTarget){ // starting node
+                //if starting node isn't set yet
+                if(sfg.getStart() == null)
+                    sfg.setStart((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
+                else connected = false;
+            }
+            if(isTarget && !isSource){ // ending node
+                //if ending node isn't set yet
+                if(sfg.getEnd() == null)
+                    sfg.setEnd((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
+                else connected = false;
+            }
+
         }
         if(!connected) {
             //display error message
             System.out.println("ERROR");
         }
-//        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
-//        style.put(mxConstants.STYLE_ROUNDED, true);
-//        style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
-
-
-//        mxGraphView graphView = graph.getView();
-//        System.out.println(Arrays.toString(graphView.getCellStates(cells)));
     }
     public void addNode(int x, int y, String color) {
         checkConnectivity();
@@ -107,7 +110,8 @@ public class Main extends JFrame {
                 return super.isCellSelectable(cell);
             }
         };
-
+        graph.setAllowLoops(true);
+//        graph.setDefaultLoopStyle();
         graph.getModel().addListener(mxEvent.CHANGE, (o, mxEventObject) -> {
             Object change = ((ArrayList) mxEventObject.getProperties().get("changes")).get(0);
             if (change instanceof mxValueChange) {
@@ -116,6 +120,8 @@ public class Main extends JFrame {
                     try {
                         double gain = Double.parseDouble(((mxValueChange) change).getValue().toString());
                         ((Edge) edgeMapper.get(Integer.parseInt(edge.getId()))[1]).setGain(gain);
+                        if(gain == 0)
+                            throw new Exception();
                     } catch (Exception e) {
                         // print error message
                         edge.setValue(((mxValueChange) change).getPrevious());
@@ -134,6 +140,7 @@ public class Main extends JFrame {
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
                 Edge edge = new Edge(edgeID, startNode, endNode, 0);
                 edgeMapper.put(edgeID, new Object[]{graphEdge, edge});
+                graphEdge.setValue("1");
                 edgeID++;
             }
         });
