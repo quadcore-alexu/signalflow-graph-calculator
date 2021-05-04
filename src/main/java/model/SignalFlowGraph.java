@@ -18,7 +18,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
      * it is important to use it before getting loops or paths
      */
     @Override
-    public void update() {
+    public void calculatePathsNLoops() {
         NodeVisitor nodeVisitor = new NodeVisitor(this.end);
         start.acceptVisitor(nodeVisitor);
         paths = nodeVisitor.getPaths();

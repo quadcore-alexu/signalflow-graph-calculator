@@ -25,9 +25,60 @@ public class NodeVisitor {
     }
 
     /**
+     * main method for getting all forward paths
+     *
+     * @param node to visit
+     */
+    protected void visit(Node node) {
+
+        //open node
+        if (flags.containsKey(node)) flags.get(node).setOpen(true);
+        else flags.put(node, new Flag());
+
+        currentNodes.add(node); //add to current path
+
+        if (node.equals(dest)) reportPath(); //this is the output node. i.e. end of path
+
+        //loop on children
+        for (IEdge outEdge : node.getOutEdges()) {
+
+            //enter only if child is not open, to avoid cycle
+            if (!isOpen(outEdge.getEndNode())) {
+
+                currentEdges.add(outEdge); //add edge to path
+                outEdge.getEndNode().acceptVisitor(this); //recursively visit the child
+
+            /*
+            if child is open and for the first time. i.e. was not closed before.
+            this is to avoid reporting same loop again when coming from different path
+             */
+            } else if (!wasClosed(outEdge.getEndNode())) {
+
+                currentEdges.add(outEdge); //add edge to path to get loop
+                reportLoop(outEdge.getEndNode()); //create new loop
+                removeLastEdge(); //remove edge after getting loop
+            }
+
+        } //END for loop
+
+
+        flags.get(node).setOpen(false); //close node
+        removeLastEdge(); //remove edge from current path
+        removeLastNode(); //remove node from current path
+    }
+
+    protected List<Path> getPaths() {
+        return paths;
+    }
+
+    protected List<Loop> getLoops() {
+        return loops;
+    }
+
+    /**
      * used to create a new path by giving it all the current nodes and edges and adding it to paths
      */
-    private void createPath() {
+    private void reportPath() {
         Path path = new Path();
 
         //add all nodes in path
@@ -46,61 +97,13 @@ public class NodeVisitor {
     /**
      * used to create a new loop by giving it all the current nodes and edges and adding it to loops
      */
-    private void createLoop(INode endNode) {
+    private void reportLoop(INode endNode) {
         Loop loop = new Loop();
         for (int i = currentNodes.indexOf(endNode); i < currentNodes.size(); i++) {
             loop.addNode(currentNodes.get(i));
             loop.addEdge(currentEdges.get(i));
         }
         loops.add(loop);
-    }
-
-    /**
-     * main method for getting all forward paths
-     *
-     * @param node to visit
-     */
-    protected void visit(Node node) {
-
-        //open node
-        if (flags.containsKey(node)) flags.get(node).setOpen(true);
-        else flags.put(node, new Flag());
-
-        currentNodes.add(node); //add to current path
-
-        if (node.equals(dest)) createPath(); //this is the output node. i.e. end of path
-
-        //loop on children
-        for (IEdge outEdge : node.getOutEdges()) {
-
-            //enter only if child is not open, to avoid cycle
-            if (!isOpen(outEdge.getEndNode())) {
-
-                currentEdges.add(outEdge); //add edge to path
-                outEdge.getEndNode().acceptVisitor(this); //recursively visit the child
-
-            // if child is open and for the first time. i.e. was not closed before
-            } else if (!wasClosed(outEdge.getEndNode())) {
-
-                currentEdges.add(outEdge); //add edge to path to get loop
-                createLoop(outEdge.getEndNode()); //create new loop
-                removeLastEdge(); //remove edge after getting loop
-            }
-
-        } //END for loop
-
-
-        flags.get(node).setOpen(false); //close node
-        removeLastEdge(); //remove edge from current path
-        removeLastNode(); //remove node from current path
-    }
-
-    protected List<Path> getPaths() {
-        return paths;
-    }
-
-    protected List<Loop> getLoops() {
-        return loops;
     }
 
     /**
