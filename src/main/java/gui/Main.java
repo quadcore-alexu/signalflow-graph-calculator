@@ -261,7 +261,9 @@ public class Main extends JFrame {
             JLabel l = new JLabel();
             l.setText("Transfer function= " + calc.getTransferFunction());
             p.add(l);
-
+            JLabel m = new JLabel();
+            m.setText("Delta= " + calc.getDelta());
+            p.add(m);
             for (int i=0;i<sfg.getPaths().size();i++){
                 p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)));
             }
@@ -272,8 +274,6 @@ public class Main extends JFrame {
         }
         else{
             //display error
-            //HELLO MARIAAAAAAAAAM
-
             JDialog d = new JDialog(f, "Error");
             JLabel l = new JLabel("Error");
             d.add(l);
