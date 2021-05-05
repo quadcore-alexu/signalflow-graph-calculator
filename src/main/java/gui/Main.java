@@ -4,6 +4,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 import model.Edge;
@@ -16,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends JFrame {
 
@@ -30,7 +32,7 @@ public class Main extends JFrame {
     int nodeID = 0;
     int edgeID = 0;
 
-    public void checkConnectivity(){
+    public boolean checkConnectivity(){
         sfg.setStart(null);
         sfg.setEnd(null);
         boolean connected = true;
@@ -45,7 +47,6 @@ public class Main extends JFrame {
             boolean isSource = false;
             boolean isTarget = false;
             System.out.println("id: " + cell.getId() );
-
             for (int i = 0; i < cell.getEdgeCount(); i++) {
                 mxICell source = ((mxCell) cell.getEdgeAt(i)).getSource();
                 mxICell target = ((mxCell) cell.getEdgeAt(i)).getTarget();
@@ -73,13 +74,16 @@ public class Main extends JFrame {
             }
 
         }
-        if(!connected) {
-            //display error message
-            System.out.println("ERROR");
-        }
+        return connected;
+
+//        graph.setStylesheet("edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;jettySize=auto;orthogonalLoop=1;strokeColor=#FFCC00;strokeWidth=4;");
+
+//        style.put(mxConstants.EDGE,true);
+
+//        mxGraphView graphView = graph.getView();
+//        System.out.println(Arrays.toString(graphView.getCellStates(cells)));
     }
     public void addNode(int x, int y, String color) {
-        checkConnectivity();
         mxCell vertex;
         vertex = (mxCell) graph.insertVertex(parent, "N" + nodeID, nodeID + "", x, y, 30, 30,
                 "strokeColor=#000000;fillColor=#" + color + ";shape=ellipse;resizable=0");
@@ -110,6 +114,32 @@ public class Main extends JFrame {
         };
         graph.setAllowLoops(true);
 //        graph.setDefaultLoopStyle();
+
+//        new mxCircleLayout(graph).execute(graph.getDefaultParent());
+//        new mxParallelEdgeLayout(graph).execute(graph.getDefaultParent());
+        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+        style.put(mxConstants.STYLE_ROUNDED, true);
+        style.put(mxConstants.STYLE_SPACING_BOTTOM,15);
+////        style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+//        graph.getModel().beginUpdate();
+//        mxStylesheet stylesheet = graph.getStylesheet();
+//        Hashtable<String, Object> style = new Hashtable<>();
+//        stylesheet.putCellStyle("ROUNDED", style);
+//
+//        Map<String, Object> vertexStyle = stylesheet.getDefaultVertexStyle();
+//        vertexStyle.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+//        vertexStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+//        vertexStyle.put(mxConstants.STYLE_AUTOSIZE, 1);
+//        vertexStyle.put(mxConstants.STYLE_SPACING, "10");
+//        vertexStyle.put(mxConstants.STYLE_ORTHOGONAL, "true");
+//        vertexStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+//
+//        Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
+////        edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ORTHOGONAL);
+//        edgeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CURVE);
+//        edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
+        graph.getModel().endUpdate();
+
         graph.getModel().addListener(mxEvent.CHANGE, (o, mxEventObject) -> {
             Object change = ((ArrayList) mxEventObject.getProperties().get("changes")).get(0);
             if (change instanceof mxValueChange) {
@@ -185,8 +215,6 @@ public class Main extends JFrame {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-//                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 0, 85, 0};
-//                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0, 0.0};
 
                 //---- addNodeBtn ----
                 addNodeBtn.setText("Add Node");
@@ -214,10 +242,14 @@ public class Main extends JFrame {
     private GraphCalculator calc;
 
     public void calculate() {
-        sfg.update();
-        calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+        if(checkConnectivity()){
+            System.out.println(sfg.getEnd().getId());
+            System.out.println(sfg.getStart().getId());
 
-        //-----error message---
+            sfg.update();
+            calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+
+            //-----error message---
 
         /*JDialog d = new JDialog(f, "Error");
         JLabel l = new JLabel("Error");
@@ -226,21 +258,26 @@ public class Main extends JFrame {
         d.setLocation(600,200);
         d.setVisible(true);*/
 
-        //------results---
+            //------results---
 
-        JPanel p = new JPanel();
-        JDialog d = new JDialog(f, "Results");
-        JLabel l = new JLabel();
-        l.setText("Transfer function= " + calc.getTransferFunction());
-        p.add(l);
+            JPanel p = new JPanel();
+            JDialog d = new JDialog(f, "Results");
+            JLabel l = new JLabel();
+            l.setText("Transfer function= " + calc.getTransferFunction());
+            p.add(l);
 
-        for (int i=0;i<sfg.getPaths().size();i++){
-            p.add(new JLabel("Delta "+(i+1)+"="));
+            for (int i=0;i<sfg.getPaths().size();i++){
+                p.add(new JLabel("Delta "+(i+1)+"="));
+            }
+            d.add(p);
+            d.setSize(200, 100);
+            d.setLocation(600, 200);
+            d.setVisible(true);
         }
-        d.add(p);
-        d.setSize(200, 100);
-        d.setLocation(600, 200);
-        d.setVisible(true);
+        else{
+            //display error
+            //HELLO MARIAAAAAAAAAM
+        }
     }
 
         public static void main(String[] args) {
