@@ -218,16 +218,16 @@ public class Main extends JFrame {
                 //---- addNodeBtn ----
                 addNodeBtn.setText("Add Node");
                 addNodeBtn.addActionListener(e -> addNode(600, 500, "FFFFFF"));
-                buttonBar.add(addNodeBtn, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                buttonBar.add(addNodeBtn, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                        new Insets(0, 0, 0, 0), 0, 0));
+                        new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- calculate----
                 calculateBtn.setText("Calculate");
                 calculateBtn.addActionListener(e ->calculate());
-                Dimension size = calculateBtn.getPreferredSize();
-                calculateBtn.setBounds(200, 100, size.width, size.height);
-                buttonBar.add(calculateBtn);
+                buttonBar.add(calculateBtn, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
