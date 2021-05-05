@@ -10,5 +10,4 @@ public interface INode {
     List<IEdge> getOutEdges();
     void acceptVisitor(NodeVisitor v);
     void setId(int id);
-    int getId();
 }

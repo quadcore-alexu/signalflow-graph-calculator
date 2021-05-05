@@ -5,7 +5,6 @@ import java.util.List;
 
 public class NonTouchingLoop {
     List<List<Loop>> nonTouchingLoops;
-    List<Double> gains;
     private final int n;
 
     public NonTouchingLoop(int n) {
@@ -15,15 +14,11 @@ public class NonTouchingLoop {
 
     public void addCombination(List<Loop> combination) {
         nonTouchingLoops.add(combination);
-        addGain(combination);
     }
 
     public List<List<Loop>> getNonTouchingLoops() {
         return nonTouchingLoops;
     }
 
-    private void addGain(List<Loop> combination) {
-
-    }
 
 }
