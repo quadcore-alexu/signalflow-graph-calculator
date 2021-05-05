@@ -11,7 +11,6 @@ import model.Edge;
 import model.GraphCalculator;
 import model.Node;
 import model.SignalFlowGraph;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -249,15 +248,6 @@ public class Main extends JFrame {
             sfg.update();
             calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
 
-            //-----error message---
-
-        /*JDialog d = new JDialog(f, "Error");
-        JLabel l = new JLabel("Error");
-        d.add(l);
-        d.setSize(100, 100);
-        d.setLocation(600,200);
-        d.setVisible(true);*/
-
             //------results---
 
             JPanel p = new JPanel();
@@ -267,7 +257,7 @@ public class Main extends JFrame {
             p.add(l);
 
             for (int i=0;i<sfg.getPaths().size();i++){
-                p.add(new JLabel("Delta "+(i+1)+"="));
+                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)));
             }
             d.add(p);
             d.setSize(200, 100);
@@ -277,6 +267,13 @@ public class Main extends JFrame {
         else{
             //display error
             //HELLO MARIAAAAAAAAAM
+
+            JDialog d = new JDialog(f, "Error");
+            JLabel l = new JLabel("Error");
+            d.add(l);
+            d.setSize(100, 100);
+            d.setLocation(600,200);
+            d.setVisible(true);
         }
     }
 
