@@ -5,7 +5,7 @@ import model.NodeVisitor;
 import java.util.List;
 
 public interface INode {
-    int getID();
+    int getId();
     void addOutEdge(IEdge outEdge);
     List<IEdge> getOutEdges();
     void acceptVisitor(NodeVisitor v);

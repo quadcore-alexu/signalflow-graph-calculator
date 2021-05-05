@@ -4,6 +4,7 @@ import interfaces.INode;
 import interfaces.ISignalFlowGraph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,30 +69,99 @@ public class SignalFlowGraph implements ISignalFlowGraph {
             nonTouchingLoop = new NonTouchingLoop(i) ;
             nonTouchingLoopHashMap.put(i,nonTouchingLoop);
             i++;
-            nonTouchingLoop = getNofNonTouchingLoops(i, nonTouchingLoopHashMap.get(i-1).getNonTouchingLoops());
+            //nonTouchingLoop = getNofNonTouchingLoops(i, nonTouchingLoopHashMap.get(i-1).getNonTouchingLoops());
         }
         return nonTouchingLoopHashMap;
+    }
+
+    public HashMap<Integer,NonTouchingLoop> getNofNonTouchingLoops() {
+        NonTouchingLoop nonTouchingLoop = getTwoNonTouchingLoops();
+        HashMap<Integer, NonTouchingLoop> nonTouchingLoopHashMap = new HashMap<>();
+        nonTouchingLoopHashMap.put(2,nonTouchingLoop);
+        nonTouchingLoopHashMap.put(3,new NonTouchingLoop(3));
+
+        SignalFlowGraph signalFlowGraph = constructGraph();
+        System.out.println(checkCompleteGraph(signalFlowGraph));
+        /*signalFlowGraph.setStart(loopsGraph.getNodes().get(0));
+        signalFlowGraph.setEnd(loopsGraph.getNodes().get(getNodes().size()-1));
+        List<Loop> tempList;
+        System.out.println(Arrays.deepToString(loopsAdjMatrix));
+        System.out.println(loopsGraph.getNodes().size());*/
+        signalFlowGraph.update();
+        List<Loop> graphLoops = signalFlowGraph.getLoops();
+        for (Loop l: graphLoops)
+        {
+            for (INode n :l.getNodes())
+            {
+                System.out.print(" " + n.getId());
+            }
+            System.out.println();
+        }
+        System.out.println("graphhhhh" + graphLoops.size());
+
+       /* for(Loop loop : graphLoops){
+            for (INode node : loop.getNodes())
+                System.out.println(node.getID());
+            if(loop.getNodes().size() == 3){
+                tempList = new ArrayList<>();
+                for (INode node : loop.getNodes())
+                {
+                    tempList.add(this.loops.get(node.getID()));
+                }
+                nonTouchingLoopHashMap.get(3).addCombination(tempList);
+            }
+            else if (loop.getNodes().size() > 3){
+
+            }
+        }*/
+        return nonTouchingLoopHashMap;
+    }
+    private boolean completeGraphCheck(Loop loop)
+    {
+        List<INode> nodes = loop.getNodes();
+        for (int i = 0 ; i < nodes.size() ; i++){
+            if(nodes.get(i).getOutEdges().size() < loop.getNodes().size() - 1 )
+                return false;
+            for (int j = i + 1 ; j < nodes.size() ; j ++){
+                if(loopsAdjMatrix[nodes.get(i).getId()][nodes.get(j).getId()] == 0)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkCompleteGraph(SignalFlowGraph sfg)
+    {
+        List<INode> nodes=sfg.getNodes();
+        for (INode node : nodes)
+        {
+            if(node.getOutEdges().size()!=nodes.size()-1)
+                return false;
+        }
+        return true;
+
+
     }
 
     /*
      * @return Group of n non Touching loops
      */
-    private NonTouchingLoop getNofNonTouchingLoops(int n ,List<List<Loop>> loops){
-        NonTouchingLoop nonTouchingLoop = new NonTouchingLoop(n);
-
-        for(int i = 0 ; i < loops.size() ; i++)
-        {
-            for(int j = i + 1 ; j < loops.size() ; j++ )
-            {
-                List<List<Loop>> output = loopGroupIntersection(loops.get(i),loops.get(j),n);
-                for(List<Loop> list : output){
-                    nonTouchingLoop.addCombination(list);
-                }
-            }
-
-        }
-        return nonTouchingLoop;
-    }
+//    private NonTouchingLoop getNofNonTouchingLoops(int n ,List<List<Loop>> loops){
+//        NonTouchingLoop nonTouchingLoop = new NonTouchingLoop(n);
+//
+//        for(int i = 0 ; i < loops.size() ; i++)
+//        {
+//            for(int j = i + 1 ; j < loops.size() ; j++ )
+//            {
+//                List<List<Loop>> output = loopGroupIntersection(loops.get(i),loops.get(j),n);
+//                for(List<Loop> list : output){
+//                    nonTouchingLoop.addCombination(list);
+//                }
+//            }
+//
+//        }
+//        return nonTouchingLoop;
+//    }
 
     /**
      * Method to detect Intersection between two lists of loops
@@ -142,6 +212,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
                     groupOfTwo.addCombination(loopsGroup);
                     //Add Edge between two non-touching loops
                     loopsAdjMatrix[i][j] = 1;
+                    loopsAdjMatrix[j][i]=1;
                     new Edge(id , nodes.get(i),nodes.get(j),1);
                     new Edge(id + 1 , nodes.get(j),nodes.get(i),1);
                     id++;
@@ -149,6 +220,31 @@ public class SignalFlowGraph implements ISignalFlowGraph {
             }
         }
         return groupOfTwo;
+    }
+
+    public SignalFlowGraph constructGraph(){
+        List<INode> newNodes=new ArrayList<>();
+        for (int i=0;i< loopsAdjMatrix.length;i++)
+            newNodes.add(new Node(i));
+        for (int i=0;i<loopsAdjMatrix.length;i++)
+        {
+
+            for(int j=0;j< loopsAdjMatrix.length;j++)
+            {
+                if(loopsAdjMatrix[i][j]==1)
+                {
+                    new Edge(i,newNodes.get(i),newNodes.get(j),i);
+
+                }
+
+            }
+        }
+        SignalFlowGraph sgf=new SignalFlowGraph();
+        sgf.setStart(newNodes.get(0));
+        sgf.setEnd(newNodes.get(newNodes.size()-1));
+
+        return sgf;
+
     }
 
     /**
