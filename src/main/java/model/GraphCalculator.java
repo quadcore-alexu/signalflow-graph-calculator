@@ -6,6 +6,7 @@ import interfaces.IGraphCalculator;
 import interfaces.INode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GraphCalculator implements IGraphCalculator {
@@ -16,6 +17,7 @@ public class GraphCalculator implements IGraphCalculator {
     public GraphCalculator(List<INode> nodes, List<Path> paths) {
         this.nodes = nodes;
         this.paths = paths;
+        this.augmentedAdjMatrix=this.constructAugmentedAdjMatrix();
 
     }
     //to do --> function to return list of delta i's
@@ -50,6 +52,7 @@ public class GraphCalculator implements IGraphCalculator {
      */
     private Matrix constructAdjacencyMatrix() {
         int size = nodes.size();
+        System.out.println(size);
         double[][] adjMatrix = new double[size][size];
         for (INode node : nodes) {
             int currentNodeId = node.getId();
@@ -60,6 +63,7 @@ public class GraphCalculator implements IGraphCalculator {
             }
 
         }
+        System.out.println(Arrays.deepToString(adjMatrix));
         return new Matrix(adjMatrix);
     }
 
@@ -87,7 +91,7 @@ public class GraphCalculator implements IGraphCalculator {
         for (INode node : path.getNodes()) {
             nodesToRemove.add(node.getId());
         }
-        System.out.println(nodesToRemove.size());
+
         int size = nodes.size() - nodesToRemove.size();
         int[] sliceIndices = new int[size];
         for (int i = 0; i < nodes.size(); i++) {
