@@ -7,6 +7,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
+import interfaces.IEdge;
 import model.Edge;
 import model.GraphCalculator;
 import model.Node;
@@ -95,7 +96,6 @@ public class Main extends JFrame {
         sfg.addNode(node);
         nodeMapper.put(nodeID, new Object[]{vertex, node});
         nodeID++;
-
     }
 
     public Main() {
@@ -165,7 +165,13 @@ public class Main extends JFrame {
                 graphEdge.setId(edgeID + "");
                 Node startNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getSource().getId()))[1]);
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
-                Edge edge = new Edge(edgeID, startNode, endNode, 0);
+                for (IEdge edge: startNode.getOutEdges()) {
+                    if (edge.getEndNode().equals(endNode)) {
+                        graphEdge.removeFromParent();
+                        return;
+                    }
+                }
+                Edge edge = new Edge(edgeID, startNode, endNode, 1);
                 edgeMapper.put(edgeID, new Object[]{graphEdge, edge});
                 graphEdge.setValue("1");
                 edgeID++;

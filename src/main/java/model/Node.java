@@ -16,7 +16,7 @@ public class Node implements INode {
     }
 
     @Override
-    public int getID() { return id; }
+    public int getId() { return id; }
 
     @Override
     public void addOutEdge(IEdge outEdge) {
