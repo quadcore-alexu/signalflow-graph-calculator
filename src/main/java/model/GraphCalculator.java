@@ -81,7 +81,7 @@ public class GraphCalculator implements IGraphCalculator {
 
     /**
      * get all delta i's
-     * @return
+     * @return hashmap between paths and their deltas
      */
 
     @Override

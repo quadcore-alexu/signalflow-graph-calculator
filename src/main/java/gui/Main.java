@@ -8,6 +8,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 import interfaces.IEdge;
+import interfaces.ISignalFlowGraph;
 import model.Edge;
 import model.GraphCalculator;
 import model.Node;
@@ -28,7 +29,7 @@ public class Main extends JFrame {
     Object parent;
 
 
-    SignalFlowGraph sfg;
+    ISignalFlowGraph sfg;
     int nodeID = 0;
     int edgeID = 0;
 
@@ -171,7 +172,7 @@ public class Main extends JFrame {
                         return;
                     }
                 }
-                Edge edge = new Edge(edgeID, startNode, endNode, 1);
+                Edge edge = new Edge(startNode, endNode, 1);
                 edgeMapper.put(edgeID, new Object[]{graphEdge, edge});
                 graphEdge.setValue("1");
                 edgeID++;
@@ -251,7 +252,7 @@ public class Main extends JFrame {
             System.out.println(sfg.getEnd().getId());
             System.out.println(sfg.getStart().getId());
 
-            sfg.update();
+            sfg.calculatePathsNLoops();
             calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
 
             //------results---

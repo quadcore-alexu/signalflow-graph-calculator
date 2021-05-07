@@ -21,19 +21,15 @@ class AdjMatrixTest {
     static void setUp() {
         List<INode> nodes = new ArrayList<>();
         INode first = new Node(0);
-        first.setId(0);
         INode second = new Node(1);
-        second.setId(1);
         INode third = new Node(2);
-        third.setId(2);
         INode fourth = new Node(3);
-        fourth.setId(3);
-        new Edge(0, first, second, 1);
-        new Edge(1, second, third, 2);
-        new Edge(2, third, fourth, 3);
-        new Edge(3, second, first, -5);
-        new Edge(4, fourth, first, -6);
-        new Edge(5, fourth, third, -4);
+        new Edge(first, second, 1);
+        new Edge(second, third, 2);
+        new Edge(third, fourth, 3);
+        new Edge(second, first, -5);
+        new Edge(fourth, first, -6);
+        new Edge(fourth, third, -4);
         Path p1 = new Path();
         p1.addNode(first);
         p1.addNode(second);
@@ -74,19 +70,12 @@ class AdjMatrixTest {
         ISignalFlowGraph graph = new SignalFlowGraph();
 
         INode y1 = new Node(0);
-        y1.setId(0);
         INode y2 = new Node(1);
-        y2.setId(1);
         INode y3 = new Node(2);
-        y3.setId(2);
         INode y4 = new Node(3);
-        y4.setId(3);
         INode y5 = new Node(4);
-        y5.setId(4);
         INode y6 = new Node(5);
-        y6.setId(5);
         INode y7 = new Node(6);
-        y7.setId(6);
         List<INode> nodes = new ArrayList<>();
         nodes.add(y1);
         nodes.add(y2);
@@ -99,17 +88,17 @@ class AdjMatrixTest {
         graph.setStart(y1);
         graph.setEnd(y6);
 
-        new Edge(0, y1, y2, 1);
-        new Edge(1, y2, y3, 5);
-        new Edge(2, y3, y4, 10);
-        new Edge(3, y4, y5, 2);
-        new Edge(4, y5, y2, -1);
-        new Edge(5, y5, y4, -2);
-        new Edge(6, y4, y3, -1);
-        new Edge(7, y2, y7, 10);
-        new Edge(8, y7, y5, 2);
-        new Edge(9, y5, y6, 1);
-        new Edge(10, y7, y7, -1);
+        new Edge(y1, y2, 1);
+        new Edge(y2, y3, 5);
+        new Edge(y3, y4, 10);
+        new Edge(y4, y5, 2);
+        new Edge(y5, y2, -1);
+        new Edge(y5, y4, -2);
+        new Edge(y4, y3, -1);
+        new Edge(y2, y7, 10);
+        new Edge(y7, y5, 2);
+        new Edge(y5, y6, 1);
+        new Edge(y7, y7, -1);
 
         graph.calculatePathsNLoops();
 

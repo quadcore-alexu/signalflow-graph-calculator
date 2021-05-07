@@ -29,15 +29,15 @@ public class NonTouchingLoopsTest {
         nodes.add(fourth);
         graph.setNodes(nodes);
 
-        new Edge(0, start, second, 5);
-        new Edge(1, second, third, 6);
-        new Edge(2, third, fourth, 8);
-        new Edge(3, second, fourth, 10);
-        new Edge(4, fourth, third, 8);
-        new Edge(5, second, start, 6);
+        new Edge(start, second, 5);
+        new Edge(second, third, 6);
+        new Edge(third, fourth, 8);
+        new Edge(second, fourth, 10);
+        new Edge(fourth, third, 8);
+        new Edge(second, start, 6);
 
 
-        graph.update();
+        graph.calculatePathsNLoops();
         NonTouchingLoopsCalculator calculator = new NonTouchingLoopsCalculator(graph.getLoops());
         NonTouchingLoop nonTouchingLoop = calculator.getTwoNonTouchingLoops();
         List<List<Loop>> loops = nonTouchingLoop.getNonTouchingLoops();
@@ -71,19 +71,19 @@ public class NonTouchingLoopsTest {
         nodes.add(seventh);
         graph.setNodes(nodes);
 
-        new Edge(0, start, second, 1);
-        new Edge(1, second, seventh, 10);
-        new Edge(2, second, third, 5);
-        new Edge(3, third, fourth, 10);
-        new Edge(4, third, second, -1);
-        new Edge(5, fourth, fifth, 2);
-        new Edge(6, fifth, fourth, -2);
-        new Edge(7, fifth, second, -1);
-        new Edge(8, fifth, sixth, 1);
-        new Edge(9, seventh, seventh, -1);
+        new Edge(start, second, 1);
+        new Edge(second, seventh, 10);
+        new Edge(second, third, 5);
+        new Edge(third, fourth, 10);
+        new Edge(third, second, -1);
+        new Edge(fourth, fifth, 2);
+        new Edge(fifth, fourth, -2);
+        new Edge(fifth, second, -1);
+        new Edge(fifth, sixth, 1);
+        new Edge(seventh, seventh, -1);
 
 
-        graph.update();
+        graph.calculatePathsNLoops();
         HashMap<Integer,NonTouchingLoop> nonTouchingLoop = graph.getNonTouchingLoops();
         assertEquals(4, nonTouchingLoop.get(2).getNonTouchingLoops().size());
         assertEquals(1, nonTouchingLoop.get(3).getNonTouchingLoops().size());
@@ -117,22 +117,22 @@ public class NonTouchingLoopsTest {
         nodes.add(ninth);
         graph.setNodes(nodes);
 
-        new Edge(0, start, second, 1);
-        new Edge(1, second, eighth, 10);
-        new Edge(2, second, third, 3);
-        new Edge(3, second, start, -2);
-        new Edge(4, third, fourth, 1);
-        new Edge(5, fourth, fifth, 2);
-        new Edge(6, fifth, fourth, -3);
-        new Edge(13, third, third, -3);
-        new Edge(8, fifth, sixth, 4);
-        new Edge(9,sixth,seventh,5);
-        new Edge(10, seventh, ninth, 1);
+        new Edge(start, second, 1);
+        new Edge(second, eighth, 10);
+        new Edge(second, third, 3);
+        new Edge(second, start, -2);
+        new Edge(third, fourth, 1);
+        new Edge(fourth, fifth, 2);
+        new Edge(fifth, fourth, -3);
+        new Edge(third, third, -3);
+        new Edge(fifth, sixth, 4);
+        new Edge(sixth,seventh,5);
+        new Edge(seventh, ninth, 1);
 
-        new Edge(11, eighth, eighth, -1);
-        new Edge(12,ninth,seventh,-5);
-        new Edge(11, eighth, fifth, 2);
-        graph.update();
+        new Edge(eighth, eighth, -1);
+        new Edge(ninth,seventh,-5);
+        new Edge(eighth, fifth, 2);
+        graph.calculatePathsNLoops();
         HashMap<Integer,NonTouchingLoop> nonTouchingLoop = graph.getNonTouchingLoops();
         assertEquals(10, nonTouchingLoop.get(2).getNonTouchingLoops().size());
         assertEquals(10, nonTouchingLoop.get(3).getNonTouchingLoops().size());

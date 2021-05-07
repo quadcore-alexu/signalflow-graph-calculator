@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Node implements INode {
 
-    private int id;
+    private final int id;
     private final List<IEdge> outEdges = new ArrayList<>();
 
     public Node(int id) {
@@ -33,8 +33,4 @@ public class Node implements INode {
         v.visit(this);
     }
 
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
 }
