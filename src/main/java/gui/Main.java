@@ -10,6 +10,7 @@ import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
+import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import interfaces.IEdge;
@@ -41,6 +42,8 @@ public class Main extends JFrame {
     public boolean checkConnectivity(){
         sfg.setStart(null);
         sfg.setEnd(null);
+//        mxEdgeStyle.mxEdgeStyleFunction d
+        System.out.println("MAMA" + graph.getDefaultLoopStyle().toString());
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         for (Object c: cells)
         {   mxCell cell = (mxCell) c;
@@ -100,6 +103,7 @@ public class Main extends JFrame {
         initComponents();
         //allowed selection of edges so that the user can modify their position
         graph = new mxGraph();
+        graph.setEdgeLabelsMovable(false);
         graph.setAllowLoops(true);
         graph.getModel().addListener(mxEvent.CHANGE, (o, mxEventObject) -> {
             Object change = ((ArrayList) mxEventObject.getProperties().get("changes")).get(0);
@@ -126,9 +130,14 @@ public class Main extends JFrame {
                 mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph);
                 parallelEdgeLayout.execute(graph.getDefaultParent());
                 mxCell graphEdge = (mxCell) mxEventObject.getProperties().get("edge");
+
+                System.out.println(mxConstants.EDGESTYLE_ENTITY_RELATION);
+
                 graphEdge.setId(edgeID + "");
                 Node startNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getSource().getId()))[1]);
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
+                if(startNode == endNode)
+                    graphEdge.setStyle("strokeColor=#FA8072;rounded=true;");
                 for (IEdge edge: startNode.getOutEdges()) {
                     if (edge.getEndNode().equals(endNode)) {
                         graphEdge.removeFromParent();
@@ -145,11 +154,13 @@ public class Main extends JFrame {
         graph.setAllowDanglingEdges(false);
 
         Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
-        style.put(mxConstants.STYLE_SPACING_BOTTOM,12);
+        style.put(mxConstants.STYLE_SPACING_BOTTOM,5);
+        style.put(mxConstants.STYLE_SPACING_LEFT,5);
         mxStylesheet stylesheet = graph.getStylesheet();
         Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
         edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
-
+        edgeStyle.put(mxConstants.STYLE_STROKECOLOR,"#000000");
+        edgeStyle.put(mxConstants.STYLE_FONTCOLOR,"#000000");
         graph.getModel().beginUpdate();
         sfg = new SignalFlowGraph();
         try {
