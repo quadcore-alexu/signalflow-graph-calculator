@@ -221,18 +221,27 @@ public class Main extends JFrame {
             //------results---
 
             JPanel p = new JPanel();
+            p.setLayout(new GridBagLayout());
+            //GridBagConstraints gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0);
+
             JDialog d = new JDialog(f, "Results");
-            JLabel l = new JLabel();
-            l.setText("Transfer function= " + calc.getTransferFunction());
-            p.add(l);
-            JLabel m = new JLabel();
-            m.setText("Delta= " + calc.getDelta());
-            p.add(m);
-            for (int i=0;i<sfg.getPaths().size();i++){
-                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)));
+            for (int i=0;i<sfg.getLoops().size();i++){
+                p.add(new JLabel("Loop "+(i+1)+"="+ sfg.getLoops().get(i)),new GridBagConstraints(i+1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             }
+            for (int i=0;i<sfg.getNonTouchingLoops().size();i++){
+                p.add(new JLabel((i+2)+" Non touching loops "+"="+ sfg.getNonTouchingLoops().get(i+2).getNonTouchingLoops()),new GridBagConstraints(i+1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+            }
+            JLabel delta = new JLabel();
+            delta.setText("Delta= " + calc.getDelta());
+            p.add(delta,new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+            for (int i=0;i<sfg.getPaths().size();i++){
+                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)),new GridBagConstraints(i+1,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+            }
+            JLabel transfer = new JLabel();
+            transfer.setText("Transfer function= " + calc.getTransferFunction());
+            p.add(transfer,new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             d.add(p);
-            d.setSize(200, 100);
+            d.setSize(500, 250);
             d.setLocation(600, 200);
             d.setVisible(true);
         }
