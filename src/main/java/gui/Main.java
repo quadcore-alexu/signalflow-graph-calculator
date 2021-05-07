@@ -15,15 +15,16 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import interfaces.IEdge;
 import interfaces.ISignalFlowGraph;
-import model.Edge;
-import model.DeltaCalculator;
-import model.Node;
-import model.SignalFlowGraph;
+import model.*;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Main extends JFrame {
@@ -144,7 +145,7 @@ public class Main extends JFrame {
                         return;
                     }
                 }
-                Edge edge = new Edge(startNode, endNode, 1);
+                Edge edge = new Edge(edgeID, startNode, endNode, 1);
                 edgeMapper.put(edgeID, new Object[]{graphEdge, edge});
                 graphEdge.setValue("1");
                 edgeID++;
@@ -181,7 +182,7 @@ public class Main extends JFrame {
         JPanel buttonBar = new JPanel();
         JButton addNodeBtn = new JButton();
         JButton calculateBtn = new JButton();
-
+        JButton resetBtn = new JButton();
 
         //======== this ========
         var contentPane = getContentPane();
@@ -211,6 +212,13 @@ public class Main extends JFrame {
                 buttonBar.add(calculateBtn, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 5), 0, 0));
+
+                //---- Reset----
+                resetBtn.setText("Reset");
+                resetBtn.addActionListener(e -> reset());
+                buttonBar.add(resetBtn, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -219,45 +227,107 @@ public class Main extends JFrame {
 //        setLocationRelativeTo(getOwner());
     }
 
+    public void reset() {
+        graph.removeCells(graph.getChildCells(graph.getDefaultParent()));
+        nodeMapper.clear();
+        edgeMapper.clear();
+        nodeID = 0;
+        edgeID = 0;
+        selectedEdges = null;
+        sfg = new SignalFlowGraph();
+        try {
+            addNode(300, 500, "00FFFF");
+            addNode(1200, 500, "FF6666");
+        } finally {
+            graph.getModel().endUpdate();
+            graph.refresh();
+        }
+    }
+
     private JPanel dialogPane;
     static JFrame f;
-    private DeltaCalculator calc;
+    private List<IEdge> selectedEdges;
+
 
     public void calculate() {
         if(checkConnectivity()){
 
             sfg.calculatePathsNLoops();
-            calc = new DeltaCalculator(sfg.getNodes(), sfg.getPaths());
+            DeltaCalculator calc = new DeltaCalculator(sfg.getNodes(), sfg.getPaths());
 
             //------results---
 
             JPanel p = new JPanel();
             p.setLayout(new GridBagLayout());
             JDialog d = new JDialog(f, "Results");
+            int offset = 0;
             //forward paths
+            for (int i=0;i<sfg.getPaths().size();i++){
+                JLabel l = new JLabel("Path "+(i+1)+"="+ sfg.getPaths().get(i));
 
+                // set the border of this component
+                l.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+                int finalI = i;
+                l.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        clearTracing();
+                        List<IEdge> edges = sfg.getPaths().get(finalI).getEdges();
+                        for (IEdge edge: edges) {
+                            ((mxCell)edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#FF0000;");
+                        }
+                        graph.refresh();
+                        selectedEdges = edges;
+                    }
+                });
+                p.add(l, new GridBagConstraints(1,i+1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                offset = i+1;
+            }
 
             //loops
             for (int i=0;i<sfg.getLoops().size();i++){
-                p.add(new JLabel("Loop "+(i+1)+"="+ sfg.getLoops().get(i)),new GridBagConstraints(i+1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                JLabel l = new JLabel("Loop "+(i+1)+"="+ sfg.getLoops().get(i));
+
+                // set the border of this component
+                l.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+                int finalI = i;
+                l.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        clearTracing();
+                        List<IEdge> edges = sfg.getLoops().get(finalI).getEdges();
+                        for (IEdge edge: edges) {
+                            ((mxCell)edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#FF0000;");
+                        }
+                        if (edges.size() == 1) {
+                            ((mxCell) edgeMapper.get(edges.get(0).getId())[0]).setStyle("strokeColor=#FF0000;rounded=true;");
+                        }
+                        graph.refresh();
+                        selectedEdges = edges;
+                    }
+                });
+                p.add(l, new GridBagConstraints(1,i+1+offset,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                offset += i+1;
             }
             //non-touching
             for (int i=0;i<sfg.getNonTouchingLoops().size();i++){
-                p.add(new JLabel((i+2)+" Non touching loops "+"="+ sfg.getNonTouchingLoops().get(i+2).getNonTouchingLoops()),new GridBagConstraints(i+1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                p.add(new JLabel((i+2)+" Non touching loops "+"="+ sfg.getNonTouchingLoops().get(i+2)),new GridBagConstraints(1,i + offset + 1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                offset += i +1;
             }
             //delta
             JLabel delta = new JLabel();
             delta.setText("Delta= " + calc.getDelta());
-            p.add(delta,new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+            p.add(delta,new GridBagConstraints(1,offset+1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
 
             //delta i
             for (int i=0;i<sfg.getPaths().size();i++){
-                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)),new GridBagConstraints(i+1,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)),new GridBagConstraints(i+1,i + offset+2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                offset += i +2;
             }
             //transfer function
             JLabel transfer = new JLabel();
             transfer.setText("Transfer function= " + calc.getTransferFunction());
-            p.add(transfer,new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+            p.add(transfer,new GridBagConstraints(1, offset+1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             d.add(p);
             d.setSize(500, 250);
             d.setLocation(600, 200);
@@ -274,7 +344,19 @@ public class Main extends JFrame {
         }
     }
 
-        public static void main(String[] args) {
+    private void clearTracing() {
+        if (selectedEdges != null) {
+            if (selectedEdges.size() == 1) {
+                ((mxCell) edgeMapper.get(selectedEdges.get(0).getId())[0]).setStyle("strokeColor=#FA8072;rounded=true;");
+            } else {
+                for (IEdge edge : selectedEdges) {
+                    ((mxCell) edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#0;");
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
         Main frame = new Main();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setSize(1000, 600);

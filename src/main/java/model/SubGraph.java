@@ -30,11 +30,15 @@ public class SubGraph {
         return nodes;
     }
 
+    public List<IEdge> getEdges() {
+        return edges;
+    }
+
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (INode node : nodes) {
-            stringBuilder.append(node.getId()).append(", ");
+            stringBuilder.append("N").append(node.getId()).append(", ");
         }
 
         //remove last ", "
