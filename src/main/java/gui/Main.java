@@ -13,8 +13,9 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import interfaces.IEdge;
+import interfaces.ISignalFlowGraph;
 import model.Edge;
-import model.GraphCalculator;
+import model.DeltaCalculator;
 import model.Node;
 import model.SignalFlowGraph;
 import javax.swing.*;
@@ -33,7 +34,7 @@ public class Main extends JFrame {
     Object parent;
 
 
-    SignalFlowGraph sfg;
+    ISignalFlowGraph sfg;
     int nodeID = 0;
     int edgeID = 0;
 
@@ -134,7 +135,7 @@ public class Main extends JFrame {
                         return;
                     }
                 }
-                Edge edge = new Edge(edgeID, startNode, endNode, 1);
+                Edge edge = new Edge(startNode, endNode, 1);
                 edgeMapper.put(edgeID, new Object[]{graphEdge, edge});
                 graphEdge.setValue("1");
                 edgeID++;
@@ -209,13 +210,13 @@ public class Main extends JFrame {
 
     private JPanel dialogPane;
     static JFrame f;
-    private GraphCalculator calc;
+    private DeltaCalculator calc;
 
     public void calculate() {
         if(checkConnectivity()){
 
-            sfg.update();
-            calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+            sfg.calculatePathsNLoops();
+            calc = new DeltaCalculator(sfg.getNodes(), sfg.getPaths());
 
             //------results---
 

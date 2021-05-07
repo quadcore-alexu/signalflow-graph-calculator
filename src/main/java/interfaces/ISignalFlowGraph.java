@@ -15,6 +15,12 @@ public interface ISignalFlowGraph {
 
     void setEnd(INode end);
 
+    INode getStart();
+
+    INode getEnd();
+
+    List<INode> getNodes();
+
     void calculatePathsNLoops();
 
     List<Path> getPaths();

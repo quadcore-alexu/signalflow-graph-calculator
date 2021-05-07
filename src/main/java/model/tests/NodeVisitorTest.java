@@ -23,13 +23,13 @@ class NodeVisitorTest {
         graph.setStart(start);
         graph.setEnd(fourth);
 
-        new Edge(1, start, second, 5);
-        new Edge(2, second, third, 6);
-        new Edge(3, third, fourth, 8);
-        new Edge(4, second, fourth, 10); //another path
-        new Edge(5, fourth, second, 8); //loop
-        new Edge(6, fourth, fourth, 8); //self loop
-        new Edge(7, fourth, third, 8); //loop
+        new Edge(start, second, 5);
+        new Edge(second, third, 6);
+        new Edge(third, fourth, 8);
+        new Edge(second, fourth, 10); //another path
+        new Edge(fourth, second, 8); //loop
+        new Edge(fourth, fourth, 8); //self loop
+        new Edge(fourth, third, 8); //loop
 
 
         graph.calculatePathsNLoops();
@@ -60,16 +60,16 @@ class NodeVisitorTest {
         graph.setStart(y1);
         graph.setEnd(y5);
 
-        new Edge(1, y1, y2, 1);
-        new Edge(2, y2, y3, 5);
-        new Edge(3, y3, y4, 10);
-        new Edge(4, y4, y5, 2);
-        new Edge(5, y5, y2, -1);
-        new Edge(6, y5, y4, -2);
-        new Edge(7, y4, y3, -1);
-        new Edge(8, y2, y6, 10);
-        new Edge(9, y6, y5, 2);
-        new Edge(10, y6, y6, -1);
+        new Edge(y1, y2, 1);
+        new Edge(y2, y3, 5);
+        new Edge(y3, y4, 10);
+        new Edge(y4, y5, 2);
+        new Edge(y5, y2, -1);
+        new Edge(y5, y4, -2);
+        new Edge(y4, y3, -1);
+        new Edge(y2, y6, 10);
+        new Edge(y6, y5, 2);
+        new Edge(y6, y6, -1);
 
         graph.calculatePathsNLoops();
 
@@ -100,12 +100,12 @@ class NodeVisitorTest {
         graph.setStart(n1);
         graph.setEnd(n3);
 
-        new Edge(1, n1, n2, 1);
-        new Edge(2, n2, n1, 1);
-        new Edge(3, n2, n3, 1);
-        new Edge(4, n3, n2, 1);
-        new Edge(5, n1, n3, 1);
-        new Edge(6, n3, n1, 1);
+        new Edge(n1, n2, 1);
+        new Edge(n2, n1, 1);
+        new Edge(n2, n3, 1);
+        new Edge(n3, n2, 1);
+        new Edge(n1, n3, 1);
+        new Edge(n3, n1, 1);
 
         graph.calculatePathsNLoops();
 
