@@ -83,7 +83,7 @@ public class NonTouchingLoopsTest {
         new Edge(seventh, seventh, -1);
 
 
-        graph.update();
+        graph.calculatePathsNLoops();
         HashMap<Integer,NonTouchingLoop> nonTouchingLoop = graph.getNonTouchingLoops();
         assertEquals(4, nonTouchingLoop.get(2).getNonTouchingLoops().size());
         assertEquals(1, nonTouchingLoop.get(3).getNonTouchingLoops().size());
