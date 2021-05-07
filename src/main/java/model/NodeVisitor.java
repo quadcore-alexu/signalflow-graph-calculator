@@ -20,6 +20,7 @@ public class NodeVisitor {
     List<INode> currentNodes = new ArrayList<>(); //list to hold current nodes on which we passed (open nodes)
     List<IEdge> currentEdges = new ArrayList<>(); //same as above but for edges, to get gain
 
+
     public NodeVisitor(INode dest) {
         this.dest = dest;
     }

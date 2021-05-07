@@ -2,22 +2,22 @@ package model;
 
 import Jama.Matrix;
 import interfaces.IEdge;
-import interfaces.IGraphCalculator;
+import interfaces.IDeltaCalculator;
 import interfaces.INode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class GraphCalculator implements IGraphCalculator {
+public class DeltaCalculator implements IDeltaCalculator {
     private final List<INode> nodes;
     private final List<Path> paths;
+    private final HashMap<Path, Double> deltas = new HashMap<>();
     private Matrix augmentedAdjMatrix;
 
-    public GraphCalculator(List<INode> nodes, List<Path> paths) {
+    public DeltaCalculator(List<INode> nodes, List<Path> paths) {
         this.nodes = nodes;
         this.paths = paths;
-        this.augmentedAdjMatrix=this.constructAugmentedAdjMatrix();
+        this.augmentedAdjMatrix = this.constructAugmentedAdjMatrix();
+        computeDeltas();
 
     }
     //to do --> function to return list of delta i's
@@ -29,22 +29,64 @@ public class GraphCalculator implements IGraphCalculator {
     public double getDelta() {
         return augmentedAdjMatrix.det();
     }
+
+
+    private void computeDeltas() {
+        int[] sliceIndices;
+        Matrix delta;
+        double value;
+        for (Path path : paths) {
+            sliceIndices = removeForwardPath(path);
+            if (sliceIndices == null || sliceIndices.length == 0) value = 1;
+            else {
+                delta = augmentedAdjMatrix.getMatrix(sliceIndices, sliceIndices);
+                value = delta.det();
+            }
+            deltas.put(path, value);
+        }
+
+    }
     /*
     for delta i's
     zero based index
      */
 
+    /**
+     *
+     * @param i index
+     *
+     * @return value of delta i
+     */
+
     @Override
     public double getDelta(int i) {
+
         int[] sliceIndices = removeForwardPath(paths.get(i));
         if (sliceIndices == null || sliceIndices.length == 0) return 1;
-        Matrix m = augmentedAdjMatrix.getMatrix(sliceIndices, sliceIndices);
-        return m.det();
+        Matrix delta = augmentedAdjMatrix.getMatrix(sliceIndices, sliceIndices);
+        return delta.det();
     }
 
     @Override
     public double getTransferFunction() {
-        return 0;
+        Iterator<Map.Entry<Path, Double>> entrySet = deltas.entrySet().iterator();
+        double numerator = 0;
+        while (entrySet.hasNext()) {
+            Map.Entry<Path, Double> entry = entrySet.next();
+            numerator += entry.getKey().getGain() * entry.getValue();
+        }
+        double denominator = getDelta();
+        return numerator / denominator;
+    }
+
+    /**
+     * get all delta i's
+     * @return hashmap between paths and their deltas
+     */
+
+    @Override
+    public HashMap<Path, Double> getDeltas() {
+        return deltas;
     }
 
     /*
@@ -99,8 +141,6 @@ public class GraphCalculator implements IGraphCalculator {
                 sliceIndices[index++] = i;
             }
         }
-
-
         return sliceIndices;
 
     }

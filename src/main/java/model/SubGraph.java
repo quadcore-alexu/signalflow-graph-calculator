@@ -29,4 +29,17 @@ public class SubGraph {
     public List<INode> getNodes() {
         return nodes;
     }
+
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (INode node : nodes) {
+            stringBuilder.append(node.getId()).append(", ");
+        }
+
+        //remove last ", "
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+
+        return stringBuilder.toString();
+    }
 }
