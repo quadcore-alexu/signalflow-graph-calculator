@@ -353,7 +353,7 @@ public class Main extends JFrame {
             transfer.setText("Transfer function= " + calc.getTransferFunction());
             p.add(transfer,new GridBagConstraints(1, offset+1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             d.add(p);
-            d.setSize(500, 250);
+            d.setSize(650, 325);
             d.setLocation(600, 200);
             d.setVisible(true);
         }
