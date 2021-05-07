@@ -21,8 +21,8 @@ public class NonTouchingLoopsCalculator
     /*
      * @return Group of non Touching loops with group size n
      */
-    public NonTouchingLoop getNofNonTouchingLoops(int n ,List<List<Loop>> previousStateLoops){
-        NonTouchingLoop nonTouchingLoop = new NonTouchingLoop(n);
+    public NonTouchingLoop getNofNonTouchingLoops(List<List<Loop>> previousStateLoops){
+        NonTouchingLoop nonTouchingLoop = new NonTouchingLoop();
 
         for (List<Loop> loop : previousStateLoops) {
             for (Loop value : this.loops) {
@@ -66,7 +66,7 @@ public class NonTouchingLoopsCalculator
      * Method to detect all two non touching loops
      */
     public NonTouchingLoop getTwoNonTouchingLoops() {
-        NonTouchingLoop groupOfTwo = new NonTouchingLoop(2);
+        NonTouchingLoop groupOfTwo = new NonTouchingLoop();
         List<Loop> loopsGroup;
 
         for (int i = 0 ; i < loops.size(); i++){

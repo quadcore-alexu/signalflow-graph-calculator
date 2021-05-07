@@ -128,10 +128,10 @@ public class NonTouchingLoopsTest {
         new Edge(8, fifth, sixth, 4);
         new Edge(9,sixth,seventh,5);
         new Edge(10, seventh, ninth, 1);
-
         new Edge(11, eighth, eighth, -1);
         new Edge(12,ninth,seventh,-5);
         new Edge(11, eighth, fifth, 2);
+
         graph.update();
         HashMap<Integer,NonTouchingLoop> nonTouchingLoop = graph.getNonTouchingLoops();
         assertEquals(10, nonTouchingLoop.get(2).getNonTouchingLoops().size());

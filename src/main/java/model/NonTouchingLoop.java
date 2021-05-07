@@ -5,10 +5,8 @@ import java.util.List;
 
 public class NonTouchingLoop {
     List<List<Loop>> nonTouchingLoops;
-    private final int n;
 
-    public NonTouchingLoop(int n) {
-        this.n = n;
+    public NonTouchingLoop() {
         nonTouchingLoops = new ArrayList<>();
     }
 

@@ -69,7 +69,7 @@ public class SignalFlowGraph implements ISignalFlowGraph {
             nonTouchingLoopHashMap.put(n,nonTouchingLoop);
             n++;
             calculator.setUniquenessCheck(new HashMap<>());
-            nonTouchingLoop = calculator.getNofNonTouchingLoops(n, nonTouchingLoopHashMap.get(n-1).getNonTouchingLoops());
+            nonTouchingLoop = calculator.getNofNonTouchingLoops(nonTouchingLoopHashMap.get(n-1).getNonTouchingLoops());
         }
         return nonTouchingLoopHashMap;
     }
