@@ -180,13 +180,16 @@ public class Main extends JFrame {
         dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JPanel buttonBar = new JPanel();
+        JPanel titleBar = new JPanel();
         JButton addNodeBtn = new JButton();
         JButton calculateBtn = new JButton();
         JButton resetBtn = new JButton();
+        JLabel title = new JLabel();
 
         //======== this ========
         var contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
+        contentPanel.setLayout(new BorderLayout());
 
         //======== dialogPane ========
         {
@@ -221,6 +224,20 @@ public class Main extends JFrame {
                         new Insets(0, 0, 0, 5), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
+
+            //---title---
+            {
+                title.setText("Signal Flow Graph Calculator");
+                title.setFont(new Font(Font.SERIF, Font.BOLD, 34));
+                title.setForeground(Color.decode("#b34180"));
+                titleBar.setLayout(new GridBagLayout());
+                titleBar.setBorder(new EmptyBorder(0, 0, 12, 0));
+                titleBar.add(title, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
+            }
+            dialogPane.add(titleBar,BorderLayout.NORTH);
+
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
         pack();
