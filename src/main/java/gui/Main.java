@@ -235,6 +235,12 @@ public class Main extends JFrame {
                 titleBar.add(title, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 5), 0, 0));
+                JLabel slogan=new JLabel("As simple as that!");
+                slogan.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+                slogan.setForeground(Color.decode("#f8a1d1"));
+                titleBar.add(slogan, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.CENTER,
+                        new Insets(0, 0, 0, 5), 0, 0));
             }
             dialogPane.add(titleBar,BorderLayout.NORTH);
 
@@ -278,12 +284,13 @@ public class Main extends JFrame {
             p.setLayout(new GridBagLayout());
             JDialog d = new JDialog(f, "Results");
             int offset = 0;
+
             //forward paths
             for (int i=0;i<sfg.getPaths().size();i++){
                 JLabel l = new JLabel("Path "+(i+1)+"="+ sfg.getPaths().get(i));
 
                 // set the border of this component
-                l.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+                l.setBorder(BorderFactory.createLineBorder(Color.decode("#ff5e78"), 1));
                 int finalI = i;
                 l.addMouseListener(new MouseAdapter() {
                     @Override
@@ -291,7 +298,7 @@ public class Main extends JFrame {
                         clearTracing();
                         List<IEdge> edges = sfg.getPaths().get(finalI).getEdges();
                         for (IEdge edge: edges) {
-                            ((mxCell)edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#FF0000;");
+                            ((mxCell)edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#ff5e78;");
                         }
                         graph.refresh();
                         selectedEdges = edges;
@@ -306,7 +313,7 @@ public class Main extends JFrame {
                 JLabel l = new JLabel("Loop "+(i+1)+"="+ sfg.getLoops().get(i));
 
                 // set the border of this component
-                l.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+                l.setBorder(BorderFactory.createLineBorder(Color.decode("#ff5e78"), 1));
                 int finalI = i;
                 l.addMouseListener(new MouseAdapter() {
                     @Override
@@ -314,10 +321,10 @@ public class Main extends JFrame {
                         clearTracing();
                         List<IEdge> edges = sfg.getLoops().get(finalI).getEdges();
                         for (IEdge edge: edges) {
-                            ((mxCell)edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#FF0000;");
+                            ((mxCell)edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#ff5e78;");
                         }
                         if (edges.size() == 1) {
-                            ((mxCell) edgeMapper.get(edges.get(0).getId())[0]).setStyle("strokeColor=#FF0000;rounded=true;");
+                            ((mxCell) edgeMapper.get(edges.get(0).getId())[0]).setStyle("strokeColor=#ff5e78;rounded=true;");
                         }
                         graph.refresh();
                         selectedEdges = edges;
@@ -328,7 +335,7 @@ public class Main extends JFrame {
             }
             //non-touching
             for (int i=0;i<sfg.getNonTouchingLoops().size();i++){
-                p.add(new JLabel((i+2)+" Non touching loops "+"="+ sfg.getNonTouchingLoops().get(i+2)),new GridBagConstraints(1,i + offset + 1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                p.add(new JLabel((i+2)+" Non touching loops "+"="+ sfg.getNonTouchingLoops().get(i+2).toString()),new GridBagConstraints(1,i + offset + 1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
                 offset += i +1;
             }
             //delta
