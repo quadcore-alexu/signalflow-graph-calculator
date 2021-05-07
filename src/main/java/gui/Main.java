@@ -345,7 +345,7 @@ public class Main extends JFrame {
 
             //delta i
             for (int i=0;i<sfg.getPaths().size();i++){
-                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)),new GridBagConstraints(i+1,i + offset+2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+                p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)),new GridBagConstraints(1,i + offset+2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
                 offset += i +2;
             }
             //transfer function
@@ -371,7 +371,7 @@ public class Main extends JFrame {
     private void clearTracing() {
         if (selectedEdges != null) {
             if (selectedEdges.size() == 1) {
-                ((mxCell) edgeMapper.get(selectedEdges.get(0).getId())[0]).setStyle("strokeColor=#FA8072;rounded=true;");
+                ((mxCell) edgeMapper.get(selectedEdges.get(0).getId())[0]).setStyle("strokeColor=#0;rounded=true;");
             } else {
                 for (IEdge edge : selectedEdges) {
                     ((mxCell) edgeMapper.get(edge.getId())[0]).setStyle("strokeColor=#0;");
