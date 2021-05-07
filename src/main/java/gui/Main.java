@@ -9,7 +9,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 import interfaces.IEdge;
 import model.Edge;
-import model.GraphCalculator;
+import model.DeltaCalculator;
 import model.Node;
 import model.SignalFlowGraph;
 import javax.swing.*;
@@ -244,7 +244,7 @@ public class Main extends JFrame {
 
     private JPanel dialogPane;
     static JFrame f;
-    private GraphCalculator calc;
+    private DeltaCalculator calc;
 
     public void calculate() {
         if(checkConnectivity()){
@@ -252,7 +252,7 @@ public class Main extends JFrame {
             System.out.println(sfg.getStart().getId());
 
             sfg.update();
-            calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
+            calc = new DeltaCalculator(sfg.getNodes(), sfg.getPaths());
 
             //------results---
 
