@@ -1,5 +1,9 @@
 package gui;
 
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.model.mxICell;
@@ -7,6 +11,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxStylesheet;
 import interfaces.IEdge;
 import model.Edge;
 import model.GraphCalculator;
@@ -50,8 +55,6 @@ public class Main extends JFrame {
             for (int i = 0; i < cell.getEdgeCount(); i++) {
                 mxICell source = ((mxCell) cell.getEdgeAt(i)).getSource();
                 mxICell target = ((mxCell) cell.getEdgeAt(i)).getTarget();
-//                System.out.println("source id: " + source.getId() );
-//                System.out.println("target id: " + target.getId() );
                 //self loop
                 if(source.getId().equals(target.getId()))
                     continue;
@@ -75,15 +78,9 @@ public class Main extends JFrame {
 
         }
         return connected;
-
-//        graph.setStylesheet("edgeStyle=orthogonalEdgeStyle;html=1;rounded=1;jettySize=auto;orthogonalLoop=1;strokeColor=#FFCC00;strokeWidth=4;");
-
-//        style.put(mxConstants.EDGE,true);
-
-//        mxGraphView graphView = graph.getView();
-//        System.out.println(Arrays.toString(graphView.getCellStates(cells)));
     }
     public void addNode(int x, int y, String color) {
+        graph.getModel().beginUpdate();
         mxCell vertex;
         vertex = (mxCell) graph.insertVertex(parent, "N" + nodeID, nodeID + "", x, y, 30, 30,
                 "strokeColor=#000000;fillColor=#" + color + ";shape=ellipse;resizable=0");
@@ -96,49 +93,16 @@ public class Main extends JFrame {
         sfg.addNode(node);
         nodeMapper.put(nodeID, new Object[]{vertex, node});
         nodeID++;
+        graph.getModel().endUpdate();
+
     }
 
     public Main() {
         super("Signal Flow Solver");
         initComponents();
-
-        graph = new mxGraph() {
-            @Override
-            public boolean isCellSelectable(Object cell) {
-                if (model.isEdge(cell)) {
-                    return false;
-                }
-                return super.isCellSelectable(cell);
-            }
-        };
+        //allowed selection of edges so that the user can modify their position
+        graph = new mxGraph();
         graph.setAllowLoops(true);
-//        graph.setDefaultLoopStyle();
-
-//        new mxCircleLayout(graph).execute(graph.getDefaultParent());
-//        new mxParallelEdgeLayout(graph).execute(graph.getDefaultParent());
-        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
-        style.put(mxConstants.STYLE_ROUNDED, true);
-        style.put(mxConstants.STYLE_SPACING_BOTTOM,15);
-////        style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
-//        graph.getModel().beginUpdate();
-//        mxStylesheet stylesheet = graph.getStylesheet();
-//        Hashtable<String, Object> style = new Hashtable<>();
-//        stylesheet.putCellStyle("ROUNDED", style);
-//
-//        Map<String, Object> vertexStyle = stylesheet.getDefaultVertexStyle();
-//        vertexStyle.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-//        vertexStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-//        vertexStyle.put(mxConstants.STYLE_AUTOSIZE, 1);
-//        vertexStyle.put(mxConstants.STYLE_SPACING, "10");
-//        vertexStyle.put(mxConstants.STYLE_ORTHOGONAL, "true");
-//        vertexStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-//
-//        Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
-////        edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ORTHOGONAL);
-//        edgeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CURVE);
-//        edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
-        graph.getModel().endUpdate();
-
         graph.getModel().addListener(mxEvent.CHANGE, (o, mxEventObject) -> {
             Object change = ((ArrayList) mxEventObject.getProperties().get("changes")).get(0);
             if (change instanceof mxValueChange) {
@@ -161,6 +125,8 @@ public class Main extends JFrame {
 
         graph.addListener(mxEvent.CELL_CONNECTED, (o, mxEventObject) -> {
             if (!(boolean) mxEventObject.getProperties().get("source")) {
+                mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph);
+                parallelEdgeLayout.execute(graph.getDefaultParent());
                 mxCell graphEdge = (mxCell) mxEventObject.getProperties().get("edge");
                 graphEdge.setId(edgeID + "");
                 Node startNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getSource().getId()))[1]);
@@ -179,19 +145,21 @@ public class Main extends JFrame {
         });
         parent = graph.getDefaultParent();
         graph.setAllowDanglingEdges(false);
+
+        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+        style.put(mxConstants.STYLE_SPACING_BOTTOM,12);
+        mxStylesheet stylesheet = graph.getStylesheet();
+        Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
+        edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
+
         graph.getModel().beginUpdate();
         sfg = new SignalFlowGraph();
         try {
             addNode(300, 500, "00FFFF");
             addNode(1200, 500, "FF6666");
-            //overridden by checking method .. the user may change the start / end node later
-//            sfg.setStart((Node) nodeMapper.get(0)[1]);
-//            //setEnd ?
-//            sfg.setStart((Node) nodeMapper.get(1)[1]);
         } finally {
             graph.getModel().endUpdate();
             graph.refresh();
-
         }
 
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
