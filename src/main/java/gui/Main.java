@@ -233,21 +233,28 @@ public class Main extends JFrame {
 
             JPanel p = new JPanel();
             p.setLayout(new GridBagLayout());
-            //GridBagConstraints gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0);
-
             JDialog d = new JDialog(f, "Results");
+            //forward paths
+
+
+            //loops
             for (int i=0;i<sfg.getLoops().size();i++){
                 p.add(new JLabel("Loop "+(i+1)+"="+ sfg.getLoops().get(i)),new GridBagConstraints(i+1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             }
+            //non-touching
             for (int i=0;i<sfg.getNonTouchingLoops().size();i++){
                 p.add(new JLabel((i+2)+" Non touching loops "+"="+ sfg.getNonTouchingLoops().get(i+2).getNonTouchingLoops()),new GridBagConstraints(i+1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             }
+            //delta
             JLabel delta = new JLabel();
             delta.setText("Delta= " + calc.getDelta());
             p.add(delta,new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
+
+            //delta i
             for (int i=0;i<sfg.getPaths().size();i++){
                 p.add(new JLabel("Delta "+(i+1)+"="+ calc.getDelta(i)),new GridBagConstraints(i+1,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
             }
+            //transfer function
             JLabel transfer = new JLabel();
             transfer.setText("Transfer function= " + calc.getTransferFunction());
             p.add(transfer,new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH,new Insets(0, 0, 0, 5), 0, 0));
