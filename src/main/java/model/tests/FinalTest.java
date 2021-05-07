@@ -24,13 +24,13 @@ public class FinalTest {
         INode n2=new Node(2);
         INode n3=new Node(3);
         INode n4=new Node(4);
-        new Edge(0,n0,n1,1);
-        new Edge(1,n1,n2,2);
-        new Edge(2,n2,n1,-5);
-        new Edge(3,n2,n3,3);
-        new Edge(4,n3,n2,-2);
-        new Edge(5,n3,n3,-1);
-        new Edge(6,n3,n4,4);
+        new Edge(n0,n1,1);
+        new Edge(n1,n2,2);
+        new Edge(n2,n1,-5);
+        new Edge(n2,n3,3);
+        new Edge(n3,n2,-2);
+        new Edge(n3,n3,-1);
+        new Edge(n3,n4,4);
         List<INode> nodes=new ArrayList<>();
         nodes.add(n0);
         nodes.add(n1);
@@ -43,7 +43,7 @@ public class FinalTest {
         graph.setStart(n0);
         graph.setEnd(n4);
 
-        graph.update();
+        graph.calculatePathsNLoops();
         IDeltaCalculator c=new DeltaCalculator(nodes,graph.getPaths());
         assertEquals(1,c.getDelta(0));
         //assertEquals(2,c.getDelta(1));
