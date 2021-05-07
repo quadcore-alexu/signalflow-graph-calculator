@@ -138,7 +138,7 @@ public class Main extends JFrame {
                 Node startNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getSource().getId()))[1]);
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
                 if(startNode == endNode)
-                    graphEdge.setStyle("strokeColor=#FA8072;rounded=true;");
+                    graphEdge.setStyle("strokeColor=#000000;rounded=true;");
                 for (IEdge edge: startNode.getOutEdges()) {
                     if (edge.getEndNode().equals(endNode)) {
                         graphEdge.removeFromParent();
