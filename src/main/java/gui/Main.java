@@ -40,14 +40,11 @@ public class Main extends JFrame {
     public boolean checkConnectivity(){
         sfg.setStart(null);
         sfg.setEnd(null);
-        boolean connected = true;
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         for (Object c: cells)
         {   mxCell cell = (mxCell) c;
-            if(cell.getEdgeCount() == 0){
-                connected = false;
-                break;
-            }
+            if(cell.getEdgeCount() == 0)
+                return false;
             //boolean flags to check if a cell is a source or/and target
             boolean isSource = false;
             boolean isTarget = false;
@@ -67,17 +64,17 @@ public class Main extends JFrame {
                 //if starting node isn't set yet
                 if(sfg.getStart() == null)
                     sfg.setStart((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
-                else connected = false;
+                else return false;
             }
             if(isTarget && !isSource){ // ending node
                 //if ending node isn't set yet
                 if(sfg.getEnd() == null)
                     sfg.setEnd((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
-                else connected = false;
+                else return false;
             }
 
         }
-        return connected;
+        return sfg.getStart() != null && sfg.getEnd() != null;
     }
     public void addNode(int x, int y, String color) {
         graph.getModel().beginUpdate();
@@ -216,8 +213,6 @@ public class Main extends JFrame {
 
     public void calculate() {
         if(checkConnectivity()){
-            System.out.println(sfg.getEnd().getId());
-            System.out.println(sfg.getStart().getId());
 
             sfg.update();
             calc = new GraphCalculator(sfg.getNodes(), sfg.getPaths());
