@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AdjMatrixTest {
     static double[][] arr;
-    static GraphCalculator graphCalculator;
+    static DeltaCalculator graphCalculator;
 
     @BeforeAll
     static void setUp() {
@@ -41,7 +41,7 @@ class AdjMatrixTest {
         nodes.add(fourth);
         List<Path> paths = new ArrayList<>();
         paths.add(p1);
-        graphCalculator = new GraphCalculator(nodes, paths);
+        graphCalculator = new DeltaCalculator(nodes, paths);
 
 
     }
@@ -106,7 +106,7 @@ class AdjMatrixTest {
         assertEquals(2, paths.size());
         double[][] a = {{1, 0, 0, 0, 0, 0, 0}, {-1, 1, 0, 0, 1, 0, 0}, {0, -5, 1, 1, 0, 0, 0}, {0, 0, -10, 1, 2, 0, 0},
                 {0, 0, 0, -2, 1, 0, -2}, {0, 0, 0, 0, -1, 1, 0}, {0, -10, 0, 0, 0, 0, 2}, {0, -10, 0, 0, 0, 0, 2}};
-        GraphCalculator g2 = new GraphCalculator(nodes, graph.getPaths());
+        DeltaCalculator g2 = new DeltaCalculator(nodes, graph.getPaths());
         double[][] arr = g2.constructAugmentedAdjMatrix().getArray();
 
         for (int i = 0; i < arr.length; i++)

@@ -2,18 +2,18 @@ package model;
 
 import Jama.Matrix;
 import interfaces.IEdge;
-import interfaces.IGraphCalculator;
+import interfaces.IDeltaCalculator;
 import interfaces.INode;
 
 import java.util.*;
 
-public class GraphCalculator implements IGraphCalculator {
+public class DeltaCalculator implements IDeltaCalculator {
     private final List<INode> nodes;
     private final List<Path> paths;
     private final HashMap<Path, Double> deltas = new HashMap<>();
     private Matrix augmentedAdjMatrix;
 
-    public GraphCalculator(List<INode> nodes, List<Path> paths) {
+    public DeltaCalculator(List<INode> nodes, List<Path> paths) {
         this.nodes = nodes;
         this.paths = paths;
         this.augmentedAdjMatrix = this.constructAugmentedAdjMatrix();

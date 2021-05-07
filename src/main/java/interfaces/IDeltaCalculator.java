@@ -4,7 +4,7 @@ import model.Path;
 
 import java.util.HashMap;
 
-public interface IGraphCalculator {
+public interface IDeltaCalculator {
     double getDelta();
     double getDelta(int i);
     double getTransferFunction();
