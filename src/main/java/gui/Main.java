@@ -126,12 +126,6 @@ public class Main extends JFrame {
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
                 if(startNode == endNode)
                     graphEdge.setStyle("strokeColor=#000000;rounded=true;");
-                for (IEdge edge: startNode.getOutEdges()) {
-                    if (edge.getEndNode().equals(endNode)) {
-                        graphEdge.removeFromParent();
-                        return;
-                    }
-                }
                 Edge edge = new Edge(edgeID, startNode, endNode, 1);
                 edgeMapper.put(edgeID, new Object[]{graphEdge, edge});
                 graphEdge.setValue("1");
