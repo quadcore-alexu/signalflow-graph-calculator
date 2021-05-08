@@ -1,21 +1,20 @@
 package gui;
 
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
-import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
-import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import interfaces.IEdge;
 import interfaces.ISignalFlowGraph;
-import model.*;
+import model.DeltaCalculator;
+import model.Edge;
+import model.Node;
+import model.SignalFlowGraph;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -41,10 +40,6 @@ public class Main extends JFrame {
     int edgeID = 0;
 
     public boolean checkConnectivity(){
-        sfg.setStart(null);
-        sfg.setEnd(null);
-//        mxEdgeStyle.mxEdgeStyleFunction d
-        System.out.println("MAMA" + graph.getDefaultLoopStyle().toString());
         Object[] cells = graph.getChildVertices(graph.getDefaultParent());
         for (Object c: cells)
         {   mxCell cell = (mxCell) c;
@@ -53,38 +48,33 @@ public class Main extends JFrame {
             //boolean flags to check if a cell is a source or/and target
             boolean isSource = false;
             boolean isTarget = false;
-            System.out.println("id: " + cell.getId() );
             for (int i = 0; i < cell.getEdgeCount(); i++) {
                 mxICell source = ((mxCell) cell.getEdgeAt(i)).getSource();
                 mxICell target = ((mxCell) cell.getEdgeAt(i)).getTarget();
-                //self loop
-                if(source.getId().equals(target.getId()))
-                    continue;
                 if(source.getId().equals(cell.getId()))
                     isSource = true;
                 if(target.getId().equals(cell.getId()))
                     isTarget = true;
             }
+
             if(isSource && !isTarget){ // starting node
                 //if starting node isn't set yet
-                if(sfg.getStart() == null)
-                    sfg.setStart((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
-                else return false;
+                if(sfg.getStart().getId() != Integer.parseInt(cell.getId()))
+                    return false;
             }
             if(isTarget && !isSource){ // ending node
                 //if ending node isn't set yet
-                if(sfg.getEnd() == null)
-                    sfg.setEnd((Node) (nodeMapper.get(Integer.parseInt(cell.getId()))[1]));
-                else return false;
+                if(sfg.getEnd().getId() != Integer.parseInt(cell.getId()))
+                    return false;
             }
 
         }
-        return sfg.getStart() != null && sfg.getEnd() != null;
+        return sfg.getStart() != null ;
     }
     public void addNode(int x, int y, String color) {
         graph.getModel().beginUpdate();
         mxCell vertex;
-        vertex = (mxCell) graph.insertVertex(parent, "N" + nodeID, nodeID + "", x, y, 30, 30,
+        vertex = (mxCell) graph.insertVertex(parent,nodeID+"", "N"+nodeID+ "", x, y, 30, 30,
                 "strokeColor=#000000;fillColor=#" + color + ";shape=ellipse;resizable=0");
         vertex.setId(nodeID + "");
         vertex.setEdge(false);
@@ -131,9 +121,6 @@ public class Main extends JFrame {
                 mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph);
                 parallelEdgeLayout.execute(graph.getDefaultParent());
                 mxCell graphEdge = (mxCell) mxEventObject.getProperties().get("edge");
-
-                System.out.println(mxConstants.EDGESTYLE_ENTITY_RELATION);
-
                 graphEdge.setId(edgeID + "");
                 Node startNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getSource().getId()))[1]);
                 Node endNode = (Node) (nodeMapper.get(Integer.parseInt(graphEdge.getTarget().getId()))[1]);
@@ -153,7 +140,7 @@ public class Main extends JFrame {
         });
         parent = graph.getDefaultParent();
         graph.setAllowDanglingEdges(false);
-
+        setupGraph();
         Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_SPACING_BOTTOM,5);
         style.put(mxConstants.STYLE_SPACING_LEFT,5);
@@ -162,21 +149,10 @@ public class Main extends JFrame {
         edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
         edgeStyle.put(mxConstants.STYLE_STROKECOLOR,"#000000");
         edgeStyle.put(mxConstants.STYLE_FONTCOLOR,"#000000");
-        graph.getModel().beginUpdate();
-        sfg = new SignalFlowGraph();
-        try {
-            addNode(300, 500, "00FFFF");
-            addNode(1200, 500, "FF6666");
-        } finally {
-            graph.getModel().endUpdate();
-            graph.refresh();
-        }
-
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         dialogPane.add(graphComponent);
     }
     private void initComponents() {
-        // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
         dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JPanel buttonBar = new JPanel();
@@ -185,6 +161,8 @@ public class Main extends JFrame {
         JButton calculateBtn = new JButton();
         JButton resetBtn = new JButton();
         JLabel title = new JLabel();
+        ImageIcon image = new ImageIcon(new ImageIcon("src/main/java/gui/Icon.png").getImage().getScaledInstance(250, 35, Image.SCALE_DEFAULT));
+        JLabel picLabel = new JLabel("", image, JLabel.CENTER);
 
         //======== this ========
         var contentPane = getContentPane();
@@ -214,7 +192,7 @@ public class Main extends JFrame {
                 calculateBtn.addActionListener(e ->calculate());
                 buttonBar.add(calculateBtn, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                        new Insets(0, 0, 0, 5), 0, 0));
+                        new Insets(0, 500, 0, 5), 0, 0));
 
                 //---- Reset----
                 resetBtn.setText("Reset");
@@ -222,6 +200,14 @@ public class Main extends JFrame {
                 buttonBar.add(resetBtn, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 0, 5), 0, 0));
+
+                //---- calculate----
+                picLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+                buttonBar.add(picLabel, new GridBagConstraints(4, 1, 1, 1, 1.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
+
+
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
 
@@ -257,14 +243,7 @@ public class Main extends JFrame {
         nodeID = 0;
         edgeID = 0;
         selectedEdges = null;
-        sfg = new SignalFlowGraph();
-        try {
-            addNode(300, 500, "00FFFF");
-            addNode(1200, 500, "FF6666");
-        } finally {
-            graph.getModel().endUpdate();
-            graph.refresh();
-        }
+        setupGraph();
     }
 
     private JPanel dialogPane;
@@ -379,11 +358,23 @@ public class Main extends JFrame {
             }
         }
     }
+    public void setupGraph(){
+        graph.getModel().beginUpdate();
+        sfg = new SignalFlowGraph();
+        try {
+            addNode(300, 400, "00FFFF");
+            addNode(1000, 400, "FF6666");
+            sfg.setStart((Node) (nodeMapper.get(0)[1]));
+            sfg.setEnd((Node) (nodeMapper.get(1)[1]));
+        } finally {
+            graph.getModel().endUpdate();
+            graph.refresh();
+        }
 
+    }
     public static void main(String[] args) {
         Main frame = new Main();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(1000, 600);
         frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
